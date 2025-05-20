@@ -1,33 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
+
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { Container, Nav, Navbar } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
 import './App.css'
+
+import Home from './components/home';
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      {/* Navigation mit React-Bootstrap Navbar */}
+      <Navbar expand="lg" className="bg-body-tertiary fixed-top">
+        <Container>
+          {/* Brand-Logo/Link zur Startseite */}
+          <Navbar.Brand as={Link} to="/">Wilkommen</Navbar.Brand>
+          
+          {/* Burger-Menü für mobile Ansicht */}
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          
+          {/* Navigationslinks */}
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto" activeKey={location.pathname}>
+           
+              <Nav.Link as={Link} to="/">Home</Nav.Link>
+
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
+      {/* Hauptinhalt der App */}
+      <div className="app">
+        <main>
+          {/* React Router Konfiguration */}
+          <Routes>
+            {/* Route für die Startseite */}
+            <Route path="/" 
+                   element={
+                   <Home count={count} 
+                         setCount={setCount}
+                   />} />
+              
+          </Routes>
+        </main>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
     </>
   )
 }
