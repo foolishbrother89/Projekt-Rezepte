@@ -1,12 +1,34 @@
-# React + Vite
+# Erste Schritte: installieren von Packages konfigurieren der package.json und Ports
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Nodemon
+- Automatischer Server-Neustart bei Code-Änderungen
+- Beschleunigt die Entwicklung, da man nicht manuell neu starten muss.
+## "type": "module"
+- Aktiviert ES6-Module (import/export)
+- Modernere Syntax als CommonJS (require), bessere Browser-Kompatibilität.
+## Express
+- Web-Framework für Routing und Middleware
+- Vereinfacht die Erstellung von REST-APIs und HTTP-Endpunkten.
+## mariadb
+- Datenbanktreiber für MariaDB/MySQL
+- Ermöglicht direkte Kommunikation mit deiner SQL-Datenbank.
+## bcryptjs
+- Passwort-Hashing
+## jsonwebtoken
+- Erstellung/Verifizierung von JWTs
+- Sichere Authentifizierung durch zustandslose Tokens (für Login-Systeme).
+## cookie-parser
+- Verarbeitung von Cookies
+- Liest JWTs aus Cookies (sicherer als Local Storage im Frontend).
+## dotenv
+- Umgebungsvariablen aus .env-Datei
+- Trennt sensibles (API-Keys, DB-Passwörter) vom Code.
+## cors Cross-Origin Resource Sharing
+- Erlaubt sicherere Cross-Domain-Kommunikation (z. B. wenn Frontend/Backend auf verschiedenen Ports laufen).
+## React & react-router-dom
+- React für UI-Komponenten, react-router-dom für Client-seitiges Routing.
+## Bootstrap/react-bootstrap
+- Vorgefertigte UI-Komponenten
+- Beschleunigt das Design mit responsiven Layouts.
+## Vite Modernes Frontend-Build-Tool
+- Schnellere Entwicklung mit Hot-Reload und optimierten Builds.
