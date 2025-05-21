@@ -32,3 +32,18 @@
 - Beschleunigt das Design mit responsiven Layouts.
 ## Vite Modernes Frontend-Build-Tool
 - Schnellere Entwicklung mit Hot-Reload und optimierten Builds.
+
+
+# Datenbankerstellung
+```bash
+CREATE DATABASE fi37_bayramov_fpadw;
+//jetzt will ich eine Tabelle user erstellen worin username, name, email, password_hash gespeichert werden, wobei passwort gehasht ist
+
+CREATE TABLE `user` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL
+);
+```

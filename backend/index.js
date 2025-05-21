@@ -1,5 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import 'dotenv/config';
+import getDatabaseConnection from './db.js';
+import bcrypt from 'bcryptjs';
 
 
 const app = express();
@@ -20,17 +23,34 @@ app.use(cors({
 //hier sollten die regestrierungsdaten ankommen
 app.post('/api/register', async (req, res) => {
     try {
-        console.log(req.body);
-        //ich will erstmal nur den request zurückschicken als response //testzwecke
-        res.status(200).json(req.body);
+        //jetzt aber ernst - die werte aus req.body rausholen
+        const { username, name, email, password } = req.body
+
+        //ich muss das Passwort noch hashen
+        const password_hash = await bcrypt.hash(password, 10);
+
+        //Datenbankverbindung aufbauen:
+        const conn = await getDatabaseConnection();
+        //So jetzt inserte ich die werte aus req.body in die user Tabelle in der Datenbank
+        //Die Validierung der Daten mache ich später erstmal rein damit
+        
+        await conn.query(
+            'INSERT INTO user (username, name, email, password_hash) VALUES (?, ?, ?, ?)',
+            [username, name, email, password_hash]  
+        );
+        //Erfolgsmeldung
+        res.status(201).json({message: 'Regestrierdaten in die Datenbank gespeichert'});
+        
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(409).json({ message: 'Server error' });
+    } finally {
+        conn.release();
     }
 })
 
 // Server starten
-app.listen(3001, () => {
+app.listen(process.env.PORT, () => {
   console.log('Server läuft auf Port :3001');
 });
 

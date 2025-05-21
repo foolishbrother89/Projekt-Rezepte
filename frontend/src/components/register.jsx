@@ -17,6 +17,8 @@ function Register() {
         const email = e.target.elements.email.value;
         const password = e.target.elements.password.value;
 
+        //Hier kommt die Validierung der Werte
+
         //hier schicke ich die werte an /api/register per POST anfrage 
         //die adresse gibts noch nicht!
         try {
@@ -32,7 +34,7 @@ function Register() {
 
         if (response.ok) {
             //reaktive Variable aktualisieren
-            setMessage('Erfolgreich regestriert!');
+            setMessage(data.message || 'Erfolgreich registriert!');
             //Ich schick die Daten zum testen erstmal zurück und schau ob diese ankommen
             console.log(data); 
         } else {
@@ -44,7 +46,7 @@ function Register() {
         } catch (error) {
             console.error("Fehler beim Regestrieren:", error);
             //reaktive Variable aktualisieren
-            setMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+            setMessage(data.message || `Fehler: ${response.status}`);
         }
         // Formular leeren
         e.target.reset(); 
