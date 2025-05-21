@@ -16,11 +16,52 @@ function Register() {
         const name = e.target.elements.name.value;
         const email = e.target.elements.email.value;
         const password = e.target.elements.password.value;
+        const password2 = e.target.elements.password2.value;
 
-        //Hier kommt die Validierung der Werte
+        // Passwortvalidierung
+        // Stimmen Die Passwörter überein? 
+        if (password !== password2) {
+            setMessage('Passwörter stimmen nicht überein');
+            e.target.elements.password.value = '';
+            e.target.elements.password2.value = '';
+            return;
+        }
+        // Ist das Passwort lang genug?
+        if (password.length < 6) {
+            setMessage('Passwort muss mindestens 6 Zeichen lang sein');
+            e.target.elements.password.value = '';
+            e.target.elements.password2.value = '';
+            return;
+        }
+
+        if (!(hatZahl(password) && hatSonderzeichen(password))){
+            setMessage('Passwort muss ein Sonderzeichen und eine Zahl enthalten');
+            e.target.elements.password.value = '';
+            e.target.elements.password2.value = '';
+            return;
+        }
+
+        function hatZahl(ps) {
+            const zahlen = "0123456789";
+            for (let zeichen of ps) {
+                if (zahlen.includes(zeichen)) {
+                    return true; // Zahl gefunden
+                }
+            }
+            return false; // Keine Zahl gefunden
+        }
+
+        function hatSonderzeichen(ps) {
+          const sonderzeichen = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+          for (let zeichen of ps) {
+            if (sonderzeichen.includes(zeichen)) {
+              return true; // Sonderzeichen gefunden
+            }
+          }
+          return false; // Kein Sonderzeichen
+        }
 
         //hier schicke ich die werte an /api/register per POST anfrage 
-        //die adresse gibts noch nicht!
         try {
             const response = await fetch(`http://aiserver.mshome.net:3001/api/register`, {
                 method: 'POST',
@@ -68,10 +109,12 @@ function Register() {
               <Form.Control 
                 type="text"
                 name="username" 
-                placeholder="Benutzernamen eingeben" />
+                placeholder="Benutzernamen eingeben"
+                required
+                minLength={3}/>
 
               <Form.Text className="text-muted">
-                Damit loggen Sie sich später ein. //Muss mindestens len 3 haben 
+                Damit loggen Sie sich später ein. 
               </Form.Text>
             </Form.Group>
 
@@ -80,7 +123,9 @@ function Register() {
               <Form.Control 
                 type="text"
                 name="name"
-                placeholder="namen eingeben" />
+                placeholder="namen eingeben" 
+                required
+                minLength={3}/>
             </Form.Group>
 
 
@@ -89,7 +134,8 @@ function Register() {
               <Form.Control 
                 type="email" 
                 name="email" 
-                placeholder="Enter email" />
+                placeholder="Enter email" 
+                required/>
 
               <Form.Text className="text-muted">
                 Wir werden niemals Ihre E-Mail teilen
@@ -101,10 +147,12 @@ function Register() {
               <Form.Control 
                 type="password"
                 name="password"
-                placeholder="Password" />
+                placeholder="Password" 
+                required/>
 
               <Form.Text className="text-muted">
-                Passwort muss mindestens eine längere von 3 haben // noch nicht gecodet
+                Passwort muss mindestens eine längere von 6 haben, 
+                eine Zahl und ein Sonderzeichen enthalten
               </Form.Text>
             </Form.Group>
 
@@ -113,11 +161,9 @@ function Register() {
               <Form.Control 
                 type="password"
                 name="password2"
-                placeholder="Password" />
+                placeholder="Password" 
+                required/>
 
-              <Form.Text className="text-muted">
-                Passwort vergleich muss noch gecodet werden^^ aber wo?
-              </Form.Text>
             </Form.Group>
 
             <Button variant="primary" type="submit">
