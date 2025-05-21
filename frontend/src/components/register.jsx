@@ -1,22 +1,71 @@
-import { Form, Button} from 'react-bootstrap';
+import { Form, Button, Alert} from 'react-bootstrap';
+import { useState } from 'react';
 
 function Register() {
+
+    const [message, setMessage] = useState('');
 
     const handleRegister = async (e) => {
         e.preventDefault();
         //Hier Sende ich die Registrierungsform zum backend
         //Ich Teste aber erst ob was ankommen wird
+
+        //Fragen: Schicke ich alles ins Backend?
+        //1.Schritt: Werte aus der Form rauslesen (Die, die eingegeben wurden in den Inputfeldern)
+        const username = e.target.elements.username.value;
+        const name = e.target.elements.name.value;
+        const email = e.target.elements.email.value;
+        const password = e.target.elements.password.value;
+
+        //hier schicke ich die werte an /api/register per POST anfrage 
+        //die adresse gibts noch nicht!
+        try {
+            const response = await fetch(`http://aiserver.mshome.net:3001/api/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, name, email, password }),
+        });
+        // Hier erwarte ich eine Antwort als String -> wandle es in JSON um und speichere das Objekt in data
+        const data = await response.json();
+
+        if (response.ok) {
+            //reaktive Variable aktualisieren
+            setMessage('Erfolgreich regestriert!');
+            //Ich schick die Daten zum testen erstmal zurück und schau ob diese ankommen
+            console.log(data); 
+        } else {
+            //hmm was kann den noch schief laufen?
+            console.log('Fehler bei der verbindung')
+            //wird hier der index message ins data reingehangen? ich verstehe das noch nicht
+            setMessage(data.message || 'Registrierung fehlgeschlagen');
+        }
+        } catch (error) {
+            console.error("Fehler beim Regestrieren:", error);
+            //reaktive Variable aktualisieren
+            setMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+        }
+        // Formular leeren
+        e.target.reset(); 
     }
 
 
     return (
+    <div>
+        <div>
+            <h1>Hier können Sie sich Registrieren</h1>
+            {message && <Alert variant="success">{message}</Alert>}
+        </div>
+
+
         <Form onSubmit={handleRegister}>
 
             <Form.Group className="mb-3" >
               <Form.Label>Benutzername</Form.Label>
               <Form.Control 
                 type="text"
-                name="benutzername" 
+                name="username" 
                 placeholder="Benutzernamen eingeben" />
 
               <Form.Text className="text-muted">
@@ -73,6 +122,7 @@ function Register() {
                 Registrieren
             </Button>
         </Form>
+    </div>
     );
 }
 
