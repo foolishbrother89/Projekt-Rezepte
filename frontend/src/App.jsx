@@ -8,9 +8,11 @@ import './App.css'
 
 import Home from './components/home';
 import Register from './components/register';
+import Login from './components/login';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
     <>
@@ -30,6 +32,8 @@ function App() {
               <Nav.Link as={Link} to="/">Home</Nav.Link>
 
               <Nav.Link as={Link} to="/register">Registrieren</Nav.Link>
+
+              <Nav.Link as={Link} to="/login">Login</Nav.Link>
 
             </Nav>
           </Navbar.Collapse>
@@ -51,6 +55,12 @@ function App() {
             {/* Route Registrieren */}
             <Route path="/register" 
                    element={<Register />} />
+
+            {/* Route Login */}
+            <Route path="/login" 
+                   element={<Login
+                      isLoggedIn={isLoggedIn} 
+                      setIsLoggedIn={setIsLoggedIn}  />} />
               
           </Routes>
         </main>
