@@ -1,15 +1,45 @@
 import { useState } from "react";
 import { Form, Button, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 function Login({isLoggedIn, setIsLoggedIn}){
     const [messageLogin, setMessage] = useState('');
 
-    // Erstmal Fakeanmeldung 
-    const handleSubmit = (e) =>{
-        setIsLoggedIn(true);
-        setMessage(e.target.elements.username.value);
+    const handleSubmit = async(e) =>{
+        e.preventDefault();
+        
+        const username = e.target.elements.username.value;
+        const password = e.target.elements.password.value;
+        //Jetzt muss ich die backend fragen, ob es diesen benutzer kennt
+        try {
+            const response = await fetch(`http://aiserver.mshome.net:3001/api/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+            //Hier kommt die Antwort
+            const data = await response.json();
+
+            if (response.ok) {
+                setIsLoggedIn(true);
+                //später token speichern
+                setMessage('Erfolgreich eingeloggt!');
+                setTimeout(() => {
+                    navigate('/');
+                }, 2000);
+            } else {
+                setMessage(data.message || 'Login fehlgeschlagen');
+            }
+        } catch (error) {
+            console.error("Fehler beim Login:", error);
+            setMessage("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+        }
+        e.target.reset();
     }
-    return(
+
+    return (
         <div className="mt-4">
         <h3>{isLoggedIn ? 'Willkommen zurück!' : 'Bitte einloggen'}</h3>
         {messageLogin && <Alert variant="success">{messageLogin}</Alert>}
