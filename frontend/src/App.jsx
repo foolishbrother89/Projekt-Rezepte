@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import './App.css'
 
 import Home from './components/home';
+import Register from './components/register';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -26,7 +27,9 @@ function App() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto" activeKey={location.pathname}>
            
-              <Nav.Link as={Link} to="/">Home</Nav.Link>
+              <Nav.Link as={Link} to="/home">Home</Nav.Link>
+
+              <Nav.Link as={Link} to="/register">Registrieren</Nav.Link>
 
             </Nav>
           </Navbar.Collapse>
@@ -44,6 +47,10 @@ function App() {
                    <Home count={count} 
                          setCount={setCount}
                    />} />
+            
+            {/* Route Registrieren */}
+            <Route path="/register" 
+                   element={<Register />} />
               
           </Routes>
         </main>
