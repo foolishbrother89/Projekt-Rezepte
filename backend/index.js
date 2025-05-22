@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import getDatabaseConnection from './db.js';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 
 const app = express();
@@ -32,7 +33,6 @@ app.post('/api/register', async (req, res) => {
         //Datenbankverbindung aufbauen:
         const conn = await getDatabaseConnection();
         //So jetzt inserte ich die werte aus req.body in die user Tabelle in der Datenbank
-        //Die Validierung der Daten mache ich später erstmal rein damit
         
         await conn.query(
             'INSERT INTO user (username, name, email, password_hash) VALUES (?, ?, ?, ?)',
@@ -45,9 +45,57 @@ app.post('/api/register', async (req, res) => {
         console.error(error);
         res.status(409).json({ message: 'Server error' });
     } finally {
-        conn.release();
+        if (conn) conn.release();
     }
 })
+
+//HIER sollten die login anmeldedaten ankommen
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+ 
+    const conn = await getDatabaseConnection();
+    let user;
+    try {
+        [user] = await conn.query(
+        'SELECT * FROM user WHERE username = ?',
+        [username]);
+    } catch (error) {
+        console.log(error);
+    } finally {
+        if (conn) conn.release();
+    }
+    if (!user) return res.status(400).json(
+        { message: 'Benutzer nicht gefunden' }
+    );
+    // wenn der Benutzer gefunden wird müsste user so aussehen:
+    // user = {id: 2, username: Adenus, name: Aydin, email: hanma89@gmail.com, pasword_hash: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}
+    // bcrypt.compare vergleicht die paswörter und gibt ein boolean zurück
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+
+    if (!passwordMatch) return res.status(400).json(
+        { message: 'Falsches Passwort' });
+    
+    //wenn das password passt erstelle ich einen token
+    //erst aber ein neues JWT_SECRET_KEY erstellen - eine möglichkeit:
+    // node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+    
+    /*
+    const token = jwt.sign(
+        {'user': 'aydin'},    // Payload (Nutzdaten)
+        'my-secret',          // Secret (Signaturschlüssel)
+        {expiresIn: '1h'}     // Header-Optionen
+    );
+    */
+    const token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: '1h' });
+    
+    //Ich schicke den erstelten token und die user id zurück 
+    //und speichere diese später im localStorage
+    res.json({ token, userId: user.id });
+});
+
 
 // Server starten
 app.listen(process.env.PORT, () => {

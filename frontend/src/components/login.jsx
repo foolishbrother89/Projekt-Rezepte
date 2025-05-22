@@ -5,6 +5,12 @@ import { useNavigate } from 'react-router-dom';
 function Login({isLoggedIn, setIsLoggedIn}){
     const [messageLogin, setMessage] = useState('');
 
+    // useNavigate() kann nicht direkt in Event-Handlern oder 
+    // anderen verschachtelten Funktionen aufrufen.
+    // useNavigate() ist ein Hook, diese dürfen nur auf der obersten Ebene einer Komponente 
+    // (nicht in Schleifen, Bedingungen oder verschachtelten Funktionen) aufgerufen werden.
+    const navigate = useNavigate();
+
     const handleSubmit = async(e) =>{
         e.preventDefault();
         
@@ -24,7 +30,8 @@ function Login({isLoggedIn, setIsLoggedIn}){
 
             if (response.ok) {
                 setIsLoggedIn(true);
-                //später token speichern
+                localStorage.setItem('token', data.token); // Speichert das Token
+                localStorage.setItem('userId', data.userId);  // userId speichern
                 setMessage('Erfolgreich eingeloggt!');
                 setTimeout(() => {
                     navigate('/');
