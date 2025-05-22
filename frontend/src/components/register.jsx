@@ -27,14 +27,14 @@ function Register() {
             return;
         }
         // Ist das Passwort lang genug?
-        if (password.length < 6) {
+        if (password.length < 8) {
             setMessage('Passwort muss mindestens 6 Zeichen lang sein');
             e.target.elements.password.value = '';
             e.target.elements.password2.value = '';
             return;
         }
 
-        if (!(hatZahl(password) && hatSonderzeichen(password))){
+        if (!(hatZahl(password) && hatSonderzeichen(password) && hatGrossbuchstaben(password))){
             setMessage('Passwort muss ein Sonderzeichen und eine Zahl enthalten');
             e.target.elements.password.value = '';
             e.target.elements.password2.value = '';
@@ -59,6 +59,16 @@ function Register() {
             }
           }
           return false; // Kein Sonderzeichen
+        }
+
+        function hatGrossbuchstaben(ps) {
+          const grossbuchstaben = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+          for (let zeichen of ps) {
+            if (grossbuchstaben.includes(zeichen)) {
+              return true;// Großbuchstabe gefunden
+            }
+          }
+          return false;// Kein Großbuchstaben gefunden
         }
 
         //hier schicke ich die werte an /api/register per POST anfrage 
