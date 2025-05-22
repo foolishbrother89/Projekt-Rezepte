@@ -13,8 +13,27 @@ import Login from './components/login';
 function App() {
   const [count, setCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
+  /* 
+    Wenn die Seite neu geladen wird, verlieren wir den React-State 
+    (isLoggedIn und userId werden zurückgesetzt).
+    Der Local Storage behält zwar token und userId, aber deine App weiß nichts davon, 
+    weil der State neu initialisiert wird.
+    Deswegen brauchen wir diesen useEffect Hook
+    Prüfen, ob ein Token und userId im Local Storage vorhanden ist
+    Wenn ja aktualisiert isLoggedIn und userId
+  */
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const storedUserId = localStorage.getItem('userId');
+
+    if (token && storedUserId) {
+        setIsLoggedIn(true);
+        setUserId(storedUserId);
+    }
+  }, []);
 
   // Logout löscht localStorage werte und setzt die reaktive Variable isLoggedIn 
   // zu false und navigiert zur startseite
@@ -43,6 +62,7 @@ function App() {
               <Nav.Link as={Link} to="/">Home</Nav.Link>
 
               <Nav.Link as={Link} to="/register">Registrieren</Nav.Link>
+
               {/* 
                 Wennn du eingelogt bist zeige link zu logout(ist aber nur ein Knopf der dich auslogt)
                 wenn nicht: zeige link zu login
