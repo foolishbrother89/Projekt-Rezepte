@@ -9,6 +9,7 @@ import './App.css'
 import Home from './components/home';
 import Register from './components/register';
 import Login from './components/login';
+import EigeneRezepte from './components/eigenerezepte';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -72,6 +73,10 @@ function App() {
                 :
                 <Nav.Link as={Link} to="/login">Login</Nav.Link>
               }
+              {/* 
+                Wenn man eingeloggt ist soll in der Navleiste eigene Rezepte sichtbar werden
+              */}
+              {isLoggedIn && <Nav.Link as={Link} to="/eigenerezepte">Eigene Rezepte</Nav.Link>}
 
             </Nav>
           </Navbar.Collapse>
@@ -99,7 +104,10 @@ function App() {
                    element={<Login
                       isLoggedIn={isLoggedIn} 
                       setIsLoggedIn={setIsLoggedIn}  />} />
-              
+            
+            {/* Route eigeneRezepte */}
+            <Route path="/eigenerezepte" 
+                   element={<EigeneRezepte />} />
           </Routes>
         </main>
       </div>
