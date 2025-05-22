@@ -14,6 +14,17 @@ function App() {
   const [count, setCount] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const navigate = useNavigate();
+
+  // Logout löscht localStorage werte und setzt die reaktive Variable isLoggedIn 
+  // zu false und navigiert zur startseite
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        setIsLoggedIn(false);
+        navigate('/');
+  };
+
   return (
     <>
       {/* Navigation mit React-Bootstrap Navbar */}
@@ -32,8 +43,15 @@ function App() {
               <Nav.Link as={Link} to="/">Home</Nav.Link>
 
               <Nav.Link as={Link} to="/register">Registrieren</Nav.Link>
-
-              <Nav.Link as={Link} to="/login">Login</Nav.Link>
+              {/* 
+                Wennn du eingelogt bist zeige link zu logout(ist aber nur ein Knopf der dich auslogt)
+                wenn nicht: zeige link zu login
+              */}
+              {isLoggedIn ?
+                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                :
+                <Nav.Link as={Link} to="/login">Login</Nav.Link>
+              }
 
             </Nav>
           </Navbar.Collapse>
