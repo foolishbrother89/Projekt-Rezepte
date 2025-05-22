@@ -57,8 +57,8 @@ app.post('/api/login', async (req, res) => {
     let user;
     try {
         [user] = await conn.query(
-        'SELECT * FROM user WHERE username = ?',
-        [username]);
+        'SELECT * FROM user WHERE username = ? OR email = ?',
+        [username, username]);
     } catch (error) {
         console.log(error);
     } finally {
