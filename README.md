@@ -47,3 +47,10 @@ CREATE TABLE `user` (
     password_hash VARCHAR(255) NOT NULL
 );
 ```
+
+## JWT docodieren
+
+[JWT DEKODIEREN](https://www.npmjs.com/package/jwt-decode)
+```bash
+npm install jwt-decode
+```

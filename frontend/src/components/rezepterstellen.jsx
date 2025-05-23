@@ -1,4 +1,4 @@
-
+import { jwtDecode } from 'jwt-decode';
 
 function RezeptErstellen(){
 
@@ -10,11 +10,19 @@ function RezeptErstellen(){
     // hole ich die userId aus ner reaktiven Variable? die ich mit login bestimme
     // oder aus localstorage? 
 
+    // Token aus dem LocalStorage holen
+    const token = localStorage.getItem('token');
+
+    // Token decodieren
+    const entschlüsselterToken = jwtDecode(token);
+    const userId = entschlüsselterToken.id;
+
     return(
         <div>
 
             <div>
                 <h1>Hier erstelle ich ein Rezept</h1>
+                <h3>Id des Users : {userId}</h3>
             </div>
 
         </div>
