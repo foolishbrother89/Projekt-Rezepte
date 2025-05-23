@@ -81,7 +81,7 @@ app.post('/api/login', async (req, res) => {
     
     /*
     const token = jwt.sign(
-        {'user': 'aydin'},    // Payload (Nutzdaten)
+        {'id': 2, 'user': 'aydin'},    // Payload (Nutzdaten)
         'my-secret',          // Secret (Signaturschlüssel)
         {expiresIn: '1h'}     // Header-Optionen
     );
@@ -93,7 +93,7 @@ app.post('/api/login', async (req, res) => {
     
     //Ich schicke den erstelten token und die user id zurück 
     //und speichere diese später im localStorage
-    res.json({ token, userId: user.id });
+    res.json({ token });
 });
 
 

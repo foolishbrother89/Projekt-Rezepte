@@ -31,7 +31,9 @@ function Login({isLoggedIn, setIsLoggedIn}){
             if (response.ok) {
                 setIsLoggedIn(true);
                 localStorage.setItem('token', data.token); // Speichert das Token
-                localStorage.setItem('userId', data.userId);  // userId speichern
+                //userId ist schon in der Payload ich schicke es auch nicht mehr seperat mit,
+                //ich werde die id bei Bedarf decodieren
+                //localStorage.setItem('userId', data.userId);  // userId speichern
                 setMessage('Erfolgreich eingeloggt!');
                 setTimeout(() => {
                     navigate('/');

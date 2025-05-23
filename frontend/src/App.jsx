@@ -80,7 +80,7 @@ function App() {
               {isLoggedIn && <Nav.Link as={Link} to="/eigenerezepte">Eigene Rezepte</Nav.Link>}
 
               {/*Erstellen*/}
-              <Nav.Link as={Link} to="/rezepteerstellen">Rezept Erstellen</Nav.Link>
+              <Nav.Link as={Link} to="/rezepterstellen">Rezept Erstellen</Nav.Link>
 
               {/*Deteilansicht -> kommt hier später weg / oder wird unsichtbar gemacht*/}
               <Nav.Link as={Link} to="/deteilansicht">Deteilansicht</Nav.Link>

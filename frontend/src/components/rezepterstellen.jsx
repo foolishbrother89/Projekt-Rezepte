@@ -7,7 +7,8 @@ function RezeptErstellen(){
     // Aber irgendwie muss ich die user id mitschicken, weil dieser als fremdschlüssel in die recepie tabelle mit rein muss
         //Das heist ich sollte erst die authentifizierung zu ende machen, damit RezepteErstellen() die user id aus dem localstorage mitkrigt
         
-
+    // hole ich die userId aus ner reaktiven Variable? die ich mit login bestimme
+    // oder aus localstorage? 
 
     return(
         <div>
