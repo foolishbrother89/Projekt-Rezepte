@@ -10,6 +10,8 @@ import Home from './components/home';
 import Register from './components/register';
 import Login from './components/login';
 import EigeneRezepte from './components/eigenerezepte';
+import RezeptErstellen from './components/rezepterstellen';
+import Deteilansicht from './components/deteilansicht';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -62,6 +64,7 @@ function App() {
            
               <Nav.Link as={Link} to="/">Home</Nav.Link>
 
+              {/*Regestrieren*/}
               <Nav.Link as={Link} to="/register">Registrieren</Nav.Link>
 
               {/* 
@@ -73,10 +76,14 @@ function App() {
                 :
                 <Nav.Link as={Link} to="/login">Login</Nav.Link>
               }
-              {/* 
-                Wenn man eingeloggt ist soll in der Navleiste eigene Rezepte sichtbar werden
-              */}
+              {/* Wenn man eingeloggt ist soll in der Navleiste eigene Rezepte sichtbar werden */}
               {isLoggedIn && <Nav.Link as={Link} to="/eigenerezepte">Eigene Rezepte</Nav.Link>}
+
+              {/*Erstellen*/}
+              <Nav.Link as={Link} to="/rezepteerstellen">Rezept Erstellen</Nav.Link>
+
+              {/*Deteilansicht -> kommt hier später weg / oder wird unsichtbar gemacht*/}
+              <Nav.Link as={Link} to="/deteilansicht">Deteilansicht</Nav.Link>
 
             </Nav>
           </Navbar.Collapse>
@@ -108,6 +115,15 @@ function App() {
             {/* Route eigeneRezepte */}
             <Route path="/eigenerezepte" 
                    element={<EigeneRezepte />} />
+
+            {/* Route eigeneRezepte */}
+            <Route path="/rezepterstellen" 
+                   element={<RezeptErstellen />} />
+
+            {/* Route eigeneRezepte */}
+            <Route path="/deteilansicht" 
+                   element={<Deteilansicht />} />
+
           </Routes>
         </main>
       </div>
