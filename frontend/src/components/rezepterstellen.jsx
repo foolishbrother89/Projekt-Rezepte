@@ -70,6 +70,80 @@ function RezeptErstellen(){
                         required
                     />
                 </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Zutaten</Form.Label>
+
+                  {/* Dynamisch alle Zutaten anzeigen */}
+                  {(() => {
+                    const felder = [];
+                    for (let i = 0; i < zutaten.length; i++) {
+                      felder.push(
+                        <div key={i} className="d-flex mb-2">
+                          <Form.Control
+                            value={zutaten[i]}
+                            //onChange={(e) => updateZutat(i, e.target.value)}
+                            placeholder={`Zutat ${i + 1}`}
+                          />
+                          <Form.Control
+                            value={zutaten[i]}
+                            //onChange={(e) => updateZutat(i, e.target.value)}
+                            placeholder={`Zutat ${i + 1}`}
+                          />
+                        </div>
+                      );
+                    }
+                    return felder;
+                  })()}
+
+                  {/* Button zum Hinzufügen einer neuen Zutat */}
+                  <Button onClick={addZutat} variant="secondary">
+                    + Zutat hinzufügen
+                  </Button>
+                </Form.Group>
+                <div>
+                    <h1>test</h1>
+                    <h3>zutaten : {zutaten}</h3>
+                </div>
+                
+                {/* Bild hinzufügen */}
+                <div>
+                    <input 
+                        type="file"
+                        onChange={fileHandler} 
+                        accept="image/*"
+                    />
+
+                {bild.dataURL && (
+                    <div style={{ marginTop: '1rem' }}>
+                        <h4>Bildvorschau:</h4>
+                        <img 
+                            src={bild.dataURL} 
+                            alt="Ausgewähltes Bild"
+                            style={{ 
+                                maxWidth: '100%', 
+                                maxHeight: '300px',
+                                border: '1px solid #ddd',
+                                borderRadius: '4px'
+                            }}
+                        />
+
+                        {/* Dateiname anzeigen */}
+                        {bild.fileName && (
+                            <p style={{ marginTop: '0.5rem', color: '#666' }}>
+                                Dateiname: {bild.fileName}
+                            </p>
+                        )}
+
+                        
+
+                    </div>
+                )}
+                </div>
+
+
+               
+
             </Form>
 
         </div>
