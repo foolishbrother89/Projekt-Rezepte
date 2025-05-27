@@ -25,10 +25,17 @@ function RezeptErstellen(){
     const userId = entschlüsselterToken.id;
 
     const [titel, setTitel] = useState('')
-    //weiß noch nicht wie ich die zutaten und zubereitung in der datenbank speichere 
-    //aber ich kann erstmal ein array ins backend schicken
-    const [zutaten, setZutaten] = useState(['']) 
+
+    //zutaten 
+    const [zutaten, setZutaten] = useState([{ 
+        zutat: '',
+        menge: '', 
+        einheit: '' 
+    }]);
+
     const [zubereitung, setZubereitung] = useState([''])
+
+    //bild
     const [bild, setBild] = useState({
         dataURL: null,
         fileName: null
@@ -96,10 +103,9 @@ function RezeptErstellen(){
         return formData;
     }
     //Überlegung wie zutaten in der Datenbank gespeichert werden soll:
-    //zutaten = {{zut:eier, men:3},{zut:mehl, men: 20g}}
-    
-    //Oder So?:
-    //zutaten = {{eier: 3}, {mehl: 20mg}}
+
+    //Entschieden!
+    //zutaten = {{zutat:Eier, menge:3, einheit: Anzahl},{zutat:Mehl, menge:300, einheit: Gramm}}
 
 
     //Problem: 
@@ -113,25 +119,15 @@ function RezeptErstellen(){
       for (let i = 0; i < zutaten.length; i++) {
         neueZutaten.push(zutaten[i]);
       }
-      neueZutaten.push('');
+      neueZutaten.push({ zutat: '', menge: '', einheit: '' });
       setZutaten(neueZutaten);
     };
 
     // Eine bestehende Zutat aktualisieren
-    const updateZutat = (index, neueZutat, neueMenge) => {
-      const neueZutaten = [];
-      const eineZutat = {};
-      
-      eineZutat.neueZutat = neueMenge;
+    const updateZutat = (index, feld, wert) => {
+      const neueZutaten = [...zutaten];
 
-
-      for (let i = 0; i < zutaten.length; i++) {
-        if (i === index) {
-          neueZutaten.push(eineZutat); // Aktualisierten Wert einfügen
-        } else {
-          neueZutaten.push(zutaten[i]); // da keine neuen zutaten da sind geben wir die zutaten zurück die es im zutatenObject schon gibt
-        }
-      }
+      neueZutaten[index] = { ...neueZutaten[index], [feld]: wert };
       setZutaten(neueZutaten);
     };
     //testen 
@@ -161,21 +157,22 @@ function RezeptErstellen(){
                 <Form.Group className="mb-3">
                   <Form.Label>Zutaten</Form.Label>
 
-                  {/* Dynamisch alle Zutaten anzeigen */}
-                  {(() => {
+                  {/* Dynamisch alle Zutaten erstellen/speichern*/}
+                  {((e) => {
                     const felder = [];
                     for (let i = 0; i < zutaten.length; i++) {
                       felder.push(
                         <div key={i} className="d-flex mb-2">
                           <Form.Control
-                            value={zutaten[i]}
-                            //onChange={(e) => updateZutat(i, e.target.value)}
+                            name="zutatInput"
+                            value={zutaten.zutat}
+                            onChange={(e) => updateZutat(i,'zutat', e.target.value)}
                             placeholder={`Zutat ${i + 1}`}
                           />
                           <Form.Control
-                            value={zutaten[i]}
-                            //onChange={(e) => updateZutat(i, e.target.value)}
-                            placeholder={`Zutat ${i + 1}`}
+                            name="mengeInput"
+                            value={zutaten.menge}
+                            onChange={(e) => updateZutat(i,'menge', e.target.value)}
                           />
                         </div>
                       );
@@ -185,12 +182,12 @@ function RezeptErstellen(){
 
                   {/* Button zum Hinzufügen einer neuen Zutat */}
                   <Button onClick={addZutat} variant="secondary">
-                    + Zutat hinzufügen
+                    Zutat hinzufügen
                   </Button>
                 </Form.Group>
                 <div>
                     <h1>test</h1>
-                    <h3>zutaten : {zutaten}</h3>
+                    <h3>zutaten : {zutaten.stringify}</h3>
                 </div>
                 
                 {/* Bild hinzufügen */}
