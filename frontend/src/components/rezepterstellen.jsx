@@ -29,7 +29,55 @@ function RezeptErstellen(){
     //aber ich kann erstmal ein array ins backend schicken
     const [zutaten, setZutaten] = useState([]) 
     const [zubereitung, setZubereitung] = useState([])
-    const [bild, setBild] = useState(null)
+    const [bild, setBild] = useState({
+        dataURL: null,
+        fileName: null
+    });
+    //Bildvorschau
+    function fileHandler(event){
+        // über das Event Objekt greifen wir auf die Datei zu
+        // files ist ein FileList-Array, 
+        // auch wenn nur eine Datei ausgewählt wird
+        const file = event.target.files[0];
+        //kein file da
+        if (!file) {
+            setBild({ 
+                dataURL: null,
+                fileName: null 
+            });
+            return;
+        }
+        //dateityp passend?
+        if (!file.type.startsWith('image/')) {
+            alert('Bitte nur Bilddateien (JPG/PNG/GIF) auswählen!');
+            // Reset
+            event.target.value = null;
+            setBild({ 
+                dataURL: null,
+                fileName: null 
+            });
+            return;
+        }
+
+        //Wenn bid existent und format acceptierbar
+        //Filereader Instanz / Teil des Browsers
+        const fileLeser = new FileReader();
+
+        //Ich brauche die dataURL ->
+        //Wird ausgelöst, wenn die Datei vollständig geladen ist
+        fileLeser.onload = (e) => {
+            // e.target.result enthält die DataURL als Base64-String
+            // Format: "data:image/png;base64,iVBORw0KGgo..."
+            setBild({
+                dataURL: e.target.result,
+                fileName: file.name
+            });
+        };
+
+        //Lesen starten
+        fileLeser.readAsDataURL(file);
+
+    }
 
     //alle inputs packe ich dan in eine formData und schicke es zum backend
     //dann muss ich schauen wie ich die Daten in Tabellen speichere -> späteres problem
