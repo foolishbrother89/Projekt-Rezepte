@@ -27,8 +27,8 @@ function RezeptErstellen(){
     const [titel, setTitel] = useState('')
     //weiß noch nicht wie ich die zutaten und zubereitung in der datenbank speichere 
     //aber ich kann erstmal ein array ins backend schicken
-    const [zutaten, setZutaten] = useState([]) 
-    const [zubereitung, setZubereitung] = useState([])
+    const [zutaten, setZutaten] = useState(['']) 
+    const [zubereitung, setZubereitung] = useState([''])
     const [bild, setBild] = useState({
         dataURL: null,
         fileName: null
@@ -92,11 +92,50 @@ function RezeptErstellen(){
             formData.append('bild', bild);
         }
         formData.append('user_id', userId);
-        
+
         return formData;
     }
+    //Überlegung wie zutaten in der Datenbank gespeichert werden soll:
+    //zutaten = {{zut:eier, men:3},{zut:mehl, men: 20g}}
+    
+    //Oder So?:
+    //zutaten = {{eier: 3}, {mehl: 20mg}}
 
 
+    //Problem: 
+    // Wie schreibe ich die Form für zutaten, so das man nach beliben mehrere eingeben kann?
+    
+    
+    // Wie speichere ich ein Array in eine reaktive Variable?
+
+    const addZutat = () => {
+      const neueZutaten = [];
+      for (let i = 0; i < zutaten.length; i++) {
+        neueZutaten.push(zutaten[i]);
+      }
+      neueZutaten.push('');
+      setZutaten(neueZutaten);
+    };
+
+    // Eine bestehende Zutat aktualisieren
+    const updateZutat = (index, neueZutat, neueMenge) => {
+      const neueZutaten = [];
+      const eineZutat = {};
+      
+      eineZutat.neueZutat = neueMenge;
+
+
+      for (let i = 0; i < zutaten.length; i++) {
+        if (i === index) {
+          neueZutaten.push(eineZutat); // Aktualisierten Wert einfügen
+        } else {
+          neueZutaten.push(zutaten[i]); // da keine neuen zutaten da sind geben wir die zutaten zurück die es im zutatenObject schon gibt
+        }
+      }
+      setZutaten(neueZutaten);
+    };
+    //testen 
+    console.log(zutaten);
 
     return(
         <div>
