@@ -20,7 +20,7 @@ function RezeptErstellen(){
     // Token aus dem LocalStorage holen
     const token = localStorage.getItem('token');
 
-    // Token decodieren
+    // Token decodieren - ich brauche die userId als Fremdschlüssel
     const entschlüsselterToken = jwtDecode(token);
     const userId = entschlüsselterToken.id;
 
@@ -102,33 +102,19 @@ function RezeptErstellen(){
 
         return formData;
     }
-    //Überlegung wie zutaten in der Datenbank gespeichert werden soll:
-
-    //Entschieden!
+  
     //zutaten = {{zutat:Eier, menge:3, einheit: Anzahl},{zutat:Mehl, menge:300, einheit: Gramm}}
 
 
-    //Problem: 
-    // Wie schreibe ich die Form für zutaten, so das man nach beliben mehrere eingeben kann?
-    
-    
-    // Wie speichere ich ein Array in eine reaktive Variable?
+    const [neueZutat, setNeueZutat] = useState({ zutat: '', menge: '', einheit: '' });
 
     const addZutat = () => {
-      const neueZutaten = [];
-      for (let i = 0; i < zutaten.length; i++) {
-        neueZutaten.push(zutaten[i]);
-      }
-      neueZutaten.push({ zutat: '', menge: '', einheit: '' });
-      setZutaten(neueZutaten);
-    };
-
-    // Eine bestehende Zutat aktualisieren
-    const updateZutat = (index, feld, wert) => {
-      const neueZutaten = [...zutaten];
-
-      neueZutaten[index] = { ...neueZutaten[index], [feld]: wert };
-      setZutaten(neueZutaten);
+        if (neueZutat.zutat.trim() === '' || neueZutat.menge.trim() === '') {
+            alert("Bitte alle Felder für die Zutat ausfüllen.");
+            return;
+        }
+        setZutaten([...zutaten, neueZutat]);
+        setNeueZutat({ zutat: '', menge: '', einheit: '' });
     };
     //testen 
     console.log(zutaten);
@@ -155,39 +141,40 @@ function RezeptErstellen(){
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label>Zutaten</Form.Label>
-
-                  {/* Dynamisch alle Zutaten erstellen/speichern*/}
-                  {((e) => {
-                    const felder = [];
-                    for (let i = 0; i < zutaten.length; i++) {
-                      felder.push(
-                        <div key={i} className="d-flex mb-2">
-                          <Form.Control
-                            name="zutatInput"
-                            value={zutaten.zutat}
-                            onChange={(e) => updateZutat(i,'zutat', e.target.value)}
-                            placeholder={`Zutat ${i + 1}`}
-                          />
-                          <Form.Control
-                            name="mengeInput"
-                            value={zutaten.menge}
-                            onChange={(e) => updateZutat(i,'menge', e.target.value)}
-                          />
-                        </div>
-                      );
-                    }
-                    return felder;
-                  })()}
+                  <Form.Label>Neue Zutat hinzufügen</Form.Label>
+                    <div className="d-flex mb-2">
+                        <Form.Control
+                            placeholder="Zutat"
+                            value={neueZutat.zutat}
+                            onChange={(e) => setNeueZutat({ ...neueZutat, zutat: e.target.value })}
+                        />
+                        <Form.Control
+                            placeholder="Menge"
+                            value={neueZutat.menge}
+                            onChange={(e) => setNeueZutat({ ...neueZutat, menge: e.target.value })}
+                        />
+                        <Form.Control
+                            placeholder="Einheit"
+                            value={neueZutat.einheit}
+                            onChange={(e) => setNeueZutat({ ...neueZutat, einheit: e.target.value })}
+                        />
+                    </div>
 
                   {/* Button zum Hinzufügen einer neuen Zutat */}
                   <Button onClick={addZutat} variant="secondary">
                     Zutat hinzufügen
                   </Button>
                 </Form.Group>
+
                 <div>
-                    <h1>test</h1>
-                    <h3>zutaten : {zutaten.stringify}</h3>
+                  <h5>Bisherige Zutaten:</h5>
+                  <ul>
+                    {zutaten.map((z, idx) => (
+                      <li key={idx}>
+                        {z.menge} {z.einheit} {z.zutat}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
                 
                 {/* Bild hinzufügen */}
