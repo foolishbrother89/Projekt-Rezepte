@@ -90,11 +90,19 @@ function RezeptErstellen(){
     //dann muss ich schauen wie ich die Daten in Tabellen speichere -> späteres problem
     // Das ganze schicke ich dann als ein Objekt
 
+    /*  
+        Problem:
+        FormData unterstützt keine Arrays direkt, weil es sich an einfachen Formulardaten orientiert
+        Wenn wir versuchen, ein Array als Wert einzufügen, wird es in einen String umgewandelt
+        Lösung:
+        formData.append("data", JSON.stringify(array);
+    */
+
     function rezeptObjectErstellen(){
         const formData = new FormData();
         formData.append('titel', titel);
-        formData.append('zutaten', zutaten);
-        formData.append('zubereitung', zubereitung);
+        formData.append('zutaten', JSON.stringify(zutaten));
+        formData.append('zubereitung', JSON.stringify(zubereitung));
         if (bild) {
             formData.append('bild', bild);
         }
@@ -116,9 +124,7 @@ function RezeptErstellen(){
         setZutaten([...zutaten, neueZutat]);
         setNeueZutat({ zutat: '', menge: '', einheit: '' });
     };
-    //testen 
-    console.log(zutaten);
-
+   
     return(
         <div>
 
