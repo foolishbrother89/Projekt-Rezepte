@@ -26,12 +26,7 @@ function RezeptErstellen(){
 
     const [titel, setTitel] = useState('')
 
-    //zutaten 
-    const [zutaten, setZutaten] = useState([{ 
-        zutat: '',
-        menge: '', 
-        einheit: '' 
-    }]);
+    
 
     const [zubereitung, setZubereitung] = useState([''])
 
@@ -110,21 +105,112 @@ function RezeptErstellen(){
 
         return formData;
     }
-  
-    //zutaten = {{zutat:Eier, menge:3, einheit: Anzahl},{zutat:Mehl, menge:300, einheit: Gramm}}
+//Zutaten Begin
+//###########################################################################################################################
+    //zutaten 
+    const [zutaten, setZutaten] = useState([{ 
+        zutat: '',
+        menge: '', 
+        einheit: ''  
+    }]);
+    // So sollen Zutaten aussehen:
+    // zutaten = {{zutat:Eier, menge:3, einheit: Anzahl},{zutat:Mehl, menge:300, einheit: Gramm}}
 
-
-    const [neueZutat, setNeueZutat] = useState({ zutat: '', menge: '', einheit: '' });
-
-    const addZutat = () => {
-        if (neueZutat.zutat.trim() === '' || neueZutat.menge.trim() === '') {
-            alert("Bitte alle Felder für die Zutat ausfüllen.");
-            return;
+    // Einheiten für Dropdown
+    const einheiten = ['Gramm', 'Kilogramm', 'Liter', 'Milliliter', 'Teelöffel', 'Esslöffel', 'Tasse', 'Anzahl', 'Prise'];
+    
+    // Hilfsfunktion: Einheiten-Optionen erstellen 
+    function erstelleEinheitenOptionen() {
+        const optionen = [];
+        for (let i = 0; i < einheiten.length; i++) {
+            optionen.push(
+                <option key={einheiten[i]} value={einheiten[i]}>
+                    {einheiten[i]}
+                </option>
+            );
         }
-        setZutaten([...zutaten, neueZutat]);
-        setNeueZutat({ zutat: '', menge: '', einheit: '' });
+        return optionen;
+    }
+
+    // Zutat hinzufügen
+    const addZutat = () => {
+        const neueZutaten = [];
+        for (let i = 0; i < zutaten.length; i++) {
+            neueZutaten.push(zutaten[i]);
+        }
+        neueZutaten.push({ zutat: '', menge: '', einheit: '' });
+        setZutaten(neueZutaten);
     };
-   
+
+    // Zutat aktualisieren 
+    const updateZutat = (index, feld, wert) => {
+        const neueZutaten = [...zutaten];
+        neueZutaten[index] = { ...neueZutaten[index], [feld]: wert };
+        setZutaten(neueZutaten);
+    };
+
+    // Zutat entfernen
+    const removeZutat = (index) => {
+        if (zutaten.length > 1) {
+            const neueZutaten = [];
+            for (let i = 0; i < zutaten.length; i++) {
+                if (i !== index) {
+                    neueZutaten.push(zutaten[i]);
+                }
+            }
+            setZutaten(neueZutaten);
+        }
+    };
+
+    // Hilfsfunktion: Zutaten-Felder erstellen
+    function erstelleZutatenFelder() {
+        return zutaten.map((zutat, index) => (
+            <Form.Group key={index} className="mb-3">
+                <div className="d-flex align-items-center gap-2">
+                    {/* Zutatenname */}
+                    <Form.Control
+                        className="flex-grow-1"
+                        placeholder={`Zutat ${index + 1}`}
+                        value={zutat.zutat} 
+                        onChange={(e) => updateZutat(index, 'zutat', e.target.value)}
+                    />
+
+                    {/* Menge */}
+                    <Form.Control
+                        className="flex-shrink-1"
+                        style={{ width: '25%' }}
+                        placeholder="Menge"
+                        value={zutat.menge} 
+                        onChange={(e) => updateZutat(index, 'menge', e.target.value)}
+                    />
+
+                    {/* Einheit */}
+                    <Form.Select
+                        className="flex-shrink-1"
+                        style={{ width: '30%' }}
+                        value={zutat.einheit} 
+                        onChange={(e) => updateZutat(index, 'einheit', e.target.value)}
+                    >
+                        {erstelleEinheitenOptionen()}
+                    </Form.Select>
+
+                    {/* Löschen-Button */}
+                    <Button 
+                        className="flex-shrink-0"
+                        variant="outline-danger" 
+                        size="sm"
+                        style={{ width: '80px' }}
+                        onClick={() => removeZutat(index)}
+                        disabled={zutaten.length === 1}
+                    >
+                        Löschen
+                    </Button>
+                </div>
+            </Form.Group>
+        ));
+    }
+//Zutaten Ende
+//###########################################################################################################################
     return(
         <div>
 
@@ -146,30 +232,13 @@ function RezeptErstellen(){
                     />
                 </Form.Group>
 
+                {/* Zutaten */}
                 <Form.Group className="mb-3">
-                  <Form.Label>Neue Zutat hinzufügen</Form.Label>
-                    <div className="d-flex mb-2">
-                        <Form.Control
-                            placeholder="Zutat"
-                            value={neueZutat.zutat}
-                            onChange={(e) => setNeueZutat({ ...neueZutat, zutat: e.target.value })}
-                        />
-                        <Form.Control
-                            placeholder="Menge"
-                            value={neueZutat.menge}
-                            onChange={(e) => setNeueZutat({ ...neueZutat, menge: e.target.value })}
-                        />
-                        <Form.Control
-                            placeholder="Einheit"
-                            value={neueZutat.einheit}
-                            onChange={(e) => setNeueZutat({ ...neueZutat, einheit: e.target.value })}
-                        />
-                    </div>
-
-                  {/* Button zum Hinzufügen einer neuen Zutat */}
-                  <Button onClick={addZutat} variant="secondary">
-                    Zutat hinzufügen
-                  </Button>
+                    <Form.Label>Zutaten *</Form.Label>
+                    {erstelleZutatenFelder()}
+                    <Button onClick={addZutat} variant="outline-primary" size="sm">
+                        Zutat hinzufügen
+                    </Button>
                 </Form.Group>
 
                 <div>
