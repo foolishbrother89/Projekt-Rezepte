@@ -26,9 +26,6 @@ function RezeptErstellen(){
 
     const [titel, setTitel] = useState('')
 
-    
-
-    const [zubereitung, setZubereitung] = useState([''])
 
     //bild
     const [bild, setBild] = useState({
@@ -105,9 +102,9 @@ function RezeptErstellen(){
 
         return formData;
     }
-//Zutaten Begin
+// Zutaten Begin
 //###########################################################################################################################
-    //zutaten 
+    // zutaten 
     const [zutaten, setZutaten] = useState([{ 
         zutat: '',
         menge: '', 
@@ -209,7 +206,79 @@ function RezeptErstellen(){
             </Form.Group>
         ));
     }
-//Zutaten Ende
+// Zutaten Ende
+//###########################################################################################################################
+
+// Zubereitung Ende
+//###########################################################################################################################
+    
+    // Zubereitung als Array von Schritten
+    const [zubereitung, setZubereitung] = useState(['']);
+
+    // Zubereitungsschritt hinzufügen
+    const addZubereitungsschritt = () => {
+        const neueZubereitung = [];
+        for (let i = 0; i < zubereitung.length; i++) {
+            neueZubereitung.push(zubereitung[i]);
+        }
+        neueZubereitung.push('');
+        setZubereitung(neueZubereitung);
+    };
+
+    // Zubereitungsschritt aktualisieren
+    const updateZubereitungsschritt = (index, wert) => {
+        const neueZubereitung = [];
+        for (let i = 0; i < zubereitung.length; i++) {
+            neueZubereitung.push(zubereitung[i]);
+        }
+        neueZubereitung[index] = wert;
+        setZubereitung(neueZubereitung);
+    };
+
+    // Zubereitungsschritt entfernen
+    const removeZubereitungsschritt = (index) => {
+        if (zubereitung.length > 1) {
+            const neueZubereitung = [];
+            for (let i = 0; i < zubereitung.length; i++) {
+                if (i !== index) {
+                    neueZubereitung.push(zubereitung[i]);
+                }
+            }
+            setZubereitung(neueZubereitung);
+        }
+    };
+
+    // Zubereitungsschritte-Felder erstellen
+    const erstelleZubereitungsFelder = () => (
+        zubereitung.map((schritt, index) => (
+            <Form.Group key={index} className="mb-3">
+                <div className="d-flex align-items-start gap-2">
+                    <Form.Label className="pt-2" style={{ minWidth: '60px' }}>
+                        {index + 1}.
+                    </Form.Label>
+                    <Form.Control
+                        as="textarea"
+                        rows={2}
+                        className="flex-grow-1"
+                        placeholder={`Zubereitungsschritt ${index + 1}`}
+                        value={schritt}
+                        onChange={(e) => updateZubereitungsschritt(index, e.target.value)}
+                        required
+                    />
+                    <Button 
+                        className="flex-shrink-0"
+                        variant="outline-danger" 
+                        size="sm"
+                        onClick={() => removeZubereitungsschritt(index)}
+                        disabled={zubereitung.length === 1}
+                    >
+                        Löschen
+                    </Button>
+                </div>
+            </Form.Group>
+        ))
+    );
+// Zubereitung Ende
 //###########################################################################################################################
     return(
         <div>
@@ -238,6 +307,15 @@ function RezeptErstellen(){
                     {erstelleZutatenFelder()}
                     <Button onClick={addZutat} variant="outline-primary" size="sm">
                         Zutat hinzufügen
+                    </Button>
+                </Form.Group>
+
+                {/* Zubereitung */}
+                <Form.Group className="mb-4">
+                    <Form.Label>Zubereitung *</Form.Label>
+                    {erstelleZubereitungsFelder()}
+                    <Button onClick={addZubereitungsschritt} variant="outline-primary" size="sm">
+                        + Zubereitungsschritt hinzufügen
                     </Button>
                 </Form.Group>
 
