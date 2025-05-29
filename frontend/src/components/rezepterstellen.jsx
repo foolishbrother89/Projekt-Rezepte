@@ -99,7 +99,13 @@ function RezeptErstellen(){
     // Handler für das Rezept Formular-Submit
     const handleSaveRecepie = async (e) => {
         // Verhindert Standard-Formularverhalten (Seitenneuladen)
-        e.preventDefault(); 
+        e.preventDefault();
+        
+        // Bildvalidierung
+        if (!bild.file) {
+          setError('Bitte ein Bild hochladen');
+          return;
+        }
         // Tocken aus Storage rausholen
         const token = localStorage.getItem('token'); 
         // Object aus allen inputs erstellen

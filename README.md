@@ -58,3 +58,17 @@ npm install jwt-decode
 ```bash
 npm install multer
 ```
+# recipe Datenbank
+```bash
+CREATE TABLE recipe (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  titel VARCHAR(255) NOT NULL,
+  zutaten JSON NOT NULL,  
+  zubereitung JSON NOT NULL,
+  bild_url VARCHAR(255),
+  user_id INT NOT NULL,
+  public BOOLEAN NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+```
