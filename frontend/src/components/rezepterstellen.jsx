@@ -26,11 +26,12 @@ function RezeptErstellen(){
 
     const [titel, setTitel] = useState('')
 
-
-    //bild
+// Bildvorschau und file an bild hängen ums dann schicken zu können  
+//###########################################################################################################################
     const [bild, setBild] = useState({
         dataURL: null,
-        fileName: null
+        fileName: null,
+        file: null
     });
     //Bildvorschau
     function fileHandler(event){
@@ -42,7 +43,8 @@ function RezeptErstellen(){
         if (!file) {
             setBild({ 
                 dataURL: null,
-                fileName: null 
+                fileName: null,
+                file: null
             });
             return;
         }
@@ -53,12 +55,13 @@ function RezeptErstellen(){
             event.target.value = null;
             setBild({ 
                 dataURL: null,
-                fileName: null 
+                fileName: null,
+                file: null
             });
             return;
         }
 
-        //Wenn bid existent und format acceptierbar
+        //Wenn bild existent und format acceptierbar
         //Filereader Instanz / Teil des Browsers
         const fileLeser = new FileReader();
 
@@ -69,7 +72,8 @@ function RezeptErstellen(){
             // Format: "data:image/png;base64,iVBORw0KGgo..."
             setBild({
                 dataURL: e.target.result,
-                fileName: file.name
+                fileName: file.name,
+                file: file
             });
         };
 
@@ -77,7 +81,8 @@ function RezeptErstellen(){
         fileLeser.readAsDataURL(file);
 
     }
-
+// Bild Ende
+//###########################################################################################################################
     //alle inputs packe ich dan in eine formData und schicke es zum backend
     //dann muss ich schauen wie ich die Daten in Tabellen speichere -> späteres problem
     // Das ganze schicke ich dann als ein Objekt
@@ -96,10 +101,8 @@ function RezeptErstellen(){
         formData.append('zutaten', JSON.stringify(zutaten));
         formData.append('zubereitung', JSON.stringify(zubereitung));
         if (bild) {
-            formData.append('bild', bild);
+            formData.append('bild', bild.file);
         }
-        formData.append('user_id', userId);
-
         return formData;
     }
 // Zutaten Begin
@@ -133,7 +136,6 @@ function RezeptErstellen(){
     const addZutat = () => {
         setZutaten([...zutaten, { zutat: '', menge: '', einheit: 'Gramm' }]);
     };
-
 
     // Zutat aktualisieren modern
     const updateZutat = (index, feld, wert) => {
@@ -199,7 +201,7 @@ function RezeptErstellen(){
 // Zutaten Ende
 //###########################################################################################################################
 
-// Zubereitung Ende
+// Zubereitung Begin
 //###########################################################################################################################
     
     // Zubereitung als Array von Schritten
@@ -258,13 +260,14 @@ function RezeptErstellen(){
 //###########################################################################################################################
     return(
         <div>
-
+            {/* Seiten Titel */}
             <div>
                 <h1>Hier erstelle ich ein Rezept</h1>
-                <h3>Id des Users : {userId}</h3>
             </div>
 
             <Form>
+{/* #######################################################################################################################*/}
+                {/* Titel */}
                 <Form.Group className="mb-3">
                     <Form.Label>Titel</Form.Label>
                     <Form.Control
@@ -276,7 +279,7 @@ function RezeptErstellen(){
                         required
                     />
                 </Form.Group>
-
+{/* #######################################################################################################################*/}
                 {/* Zutaten */}
                 <Form.Group className="mb-3">
                     <Form.Label>Zutaten *</Form.Label>
@@ -285,7 +288,7 @@ function RezeptErstellen(){
                         Zutat hinzufügen
                     </Button>
                 </Form.Group>
-
+{/* #######################################################################################################################*/}
                 {/* Zubereitung */}
                 <Form.Group className="mb-4">
                     <Form.Label>Zubereitung *</Form.Label>
@@ -294,55 +297,40 @@ function RezeptErstellen(){
                         + Zubereitungsschritt hinzufügen
                     </Button>
                 </Form.Group>
-
-                <div>
-                  <h5>Bisherige Zutaten:</h5>
-                  <ul>
-                    {zutaten.map((z, idx) => (
-                      <li key={idx}>
-                        {z.menge} {z.einheit} {z.zutat}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
+{/* #######################################################################################################################*/}
                 {/* Bild hinzufügen */}
                 <div>
+                    {/* Inputfeld */}
                     <input 
                         type="file"
                         onChange={fileHandler} 
                         accept="image/*"
                     />
+                    {/* Wenn es ein Bild gibt, zeige eine Vorschau */}
+                    {bild.dataURL && (
+                        <div style={{ marginTop: '1rem' }}>
+                            <h4>Bildvorschau:</h4>
+                            <img 
+                                src={bild.dataURL} 
+                                alt="Ausgewähltes Bild"
+                                style={{ 
+                                    maxWidth: '100%', 
+                                    maxHeight: '300px',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '4px'
+                                }}
+                            />
 
-                {bild.dataURL && (
-                    <div style={{ marginTop: '1rem' }}>
-                        <h4>Bildvorschau:</h4>
-                        <img 
-                            src={bild.dataURL} 
-                            alt="Ausgewähltes Bild"
-                            style={{ 
-                                maxWidth: '100%', 
-                                maxHeight: '300px',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px'
-                            }}
-                        />
-
-                        {/* Dateiname anzeigen */}
-                        {bild.fileName && (
-                            <p style={{ marginTop: '0.5rem', color: '#666' }}>
-                                Dateiname: {bild.fileName}
-                            </p>
-                        )}
-
-                        
-
-                    </div>
-                )}
+                            {/* Dateiname anzeigen */}
+                            {bild.fileName && (
+                                <p style={{ marginTop: '0.5rem', color: '#666' }}>
+                                    Dateiname: {bild.fileName}
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </div>
-
-
-               
+{/* #######################################################################################################################*/}
 
             </Form>
 
