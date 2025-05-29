@@ -12,17 +12,6 @@ function RezeptErstellen(){
 
     // hier habe ich wie bei der registrierung ein inputformular in welchen ich ein Rezept erstelle
     // Sobald ich die inputs habe schicke ich an die Backend per POST an /api/rezepte die Werte
-    // Aber irgendwie muss ich die user id mitschicken, weil dieser als fremdschlüssel in die recepie tabelle mit rein muss
-        //Das heist ich sollte erst die authentifizierung zu ende machen, damit RezepteErstellen() die user id aus dem localstorage mitkrigt
-        
-    // oder aus localstorage? 
-
-    // Token aus dem LocalStorage holen
-    const token = localStorage.getItem('token');
-
-    // Token decodieren - ich brauche die userId als Fremdschlüssel
-    const entschlüsselterToken = jwtDecode(token);
-    const userId = entschlüsselterToken.id;
 
     const [titel, setTitel] = useState('')
 
@@ -83,9 +72,10 @@ function RezeptErstellen(){
     }
 // Bild Ende
 //###########################################################################################################################
+
+// Objekt zum Senden in die Backend + das Senden
+//###########################################################################################################################
     //alle inputs packe ich dan in eine formData und schicke es zum backend
-    //dann muss ich schauen wie ich die Daten in Tabellen speichere -> späteres problem
-    // Das ganze schicke ich dann als ein Objekt
 
     /*  
         Problem:
@@ -94,7 +84,6 @@ function RezeptErstellen(){
         Lösung:
         formData.append("data", JSON.stringify(array);
     */
-
     function rezeptObjectErstellen(){
         const formData = new FormData();
         formData.append('titel', titel);
@@ -105,6 +94,45 @@ function RezeptErstellen(){
         }
         return formData;
     }
+
+    // Handler für das Rezept Formular-Submit
+    const handleSaveRecepie = async (e) => {
+        // Verhindert Standard-Formularverhalten (Seitenneuladen)
+        e.preventDefault(); 
+        // Tocken aus Storage rausholen
+        const token = localStorage.getItem('token'); 
+        // Object aus allen inputs erstellen
+        const formDataObj = rezeptObjectErstellen();
+        // An Backend Senden
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_SERVER_URL}/api/RezeptErstellen`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Token mitschicken im headder
+                    //'Content-Type': 'application/json', wird vom formData automatisch gesetzt
+                },
+                body: formDataObj // inputObjekt(Payload)
+            });
+            // Antwort erwarten
+            const data = await response.json();
+
+            if (response.ok){
+                // Positive Antwort angekommen
+            } else {
+                // Negative Antwort angekommen
+            }
+        // Keine Antwort oder falsche Adresse  
+        } catch (error) {
+            setMessage('Fehler beim Speichern des Profils');
+        }
+
+        //Inputfelder Zurücksetzen/Leeren
+    };
+
+
+// Senden Ende
+//###########################################################################################################################
+
 // Zutaten Begin
 //###########################################################################################################################
     // zutaten 
@@ -160,7 +188,8 @@ function RezeptErstellen(){
                     <Form.Control
                         className="flex-grow-1"
                         placeholder={`Zutat ${index + 1}`}
-                        value={zutat.zutat} 
+                        value={zutat.zutat}
+                        required
                         onChange={(e) => updateZutat(index, 'zutat', e.target.value)}
                     />
 
@@ -169,7 +198,8 @@ function RezeptErstellen(){
                         className="flex-shrink-1"
                         style={{ width: '25%' }}
                         placeholder="Menge"
-                        value={zutat.menge} 
+                        value={zutat.menge}
+                        required
                         onChange={(e) => updateZutat(index, 'menge', e.target.value)}
                     />
 
@@ -177,7 +207,8 @@ function RezeptErstellen(){
                     <Form.Select
                         className="flex-shrink-1"
                         style={{ width: '30%' }}
-                        value={zutat.einheit} 
+                        value={zutat.einheit}
+                        required
                         onChange={(e) => updateZutat(index, 'einheit', e.target.value)}
                     >
                         {erstelleEinheitenOptionen()}
@@ -265,11 +296,11 @@ function RezeptErstellen(){
                 <h1>Hier erstelle ich ein Rezept</h1>
             </div>
 
-            <Form>
+            <Form onSubmit={handleSaveRecepie}>
 {/* #######################################################################################################################*/}
                 {/* Titel */}
                 <Form.Group className="mb-3">
-                    <Form.Label>Titel</Form.Label>
+                    <Form.Label>Titel *</Form.Label>
                     <Form.Control
                         type="text"
                         name="titel"
@@ -294,7 +325,7 @@ function RezeptErstellen(){
                     <Form.Label>Zubereitung *</Form.Label>
                     {erstelleZubereitungsFelder()}
                     <Button onClick={addZubereitungsschritt} variant="outline-primary" size="sm">
-                        + Zubereitungsschritt hinzufügen
+                        Zubereitungsschritt hinzufügen
                     </Button>
                 </Form.Group>
 {/* #######################################################################################################################*/}
@@ -329,6 +360,14 @@ function RezeptErstellen(){
                             )}
                         </div>
                     )}
+                </div>
+{/* #######################################################################################################################*/}
+                {/* Senden Knopf */}
+                <br></br>
+                <div>
+                    <Button variant="primary" type="submit" size="m">
+                        Rezept speichern
+                    </Button>
                 </div>
 {/* #######################################################################################################################*/}
 
