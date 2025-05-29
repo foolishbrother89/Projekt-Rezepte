@@ -129,33 +129,23 @@ function RezeptErstellen(){
         return optionen;
     }
 
-    // Zutat hinzufügen
+    // Zutat hinzufügen modern
     const addZutat = () => {
-        const neueZutaten = [];
-        for (let i = 0; i < zutaten.length; i++) {
-            neueZutaten.push(zutaten[i]);
-        }
-        neueZutaten.push({ zutat: '', menge: '', einheit: '' });
-        setZutaten(neueZutaten);
+        setZutaten([...zutaten, { zutat: '', menge: '', einheit: 'Gramm' }]);
     };
 
-    // Zutat aktualisieren 
+
+    // Zutat aktualisieren modern
     const updateZutat = (index, feld, wert) => {
         const neueZutaten = [...zutaten];
         neueZutaten[index] = { ...neueZutaten[index], [feld]: wert };
         setZutaten(neueZutaten);
     };
 
-    // Zutat entfernen
+    // Zutat entfernen nodern
     const removeZutat = (index) => {
         if (zutaten.length > 1) {
-            const neueZutaten = [];
-            for (let i = 0; i < zutaten.length; i++) {
-                if (i !== index) {
-                    neueZutaten.push(zutaten[i]);
-                }
-            }
-            setZutaten(neueZutaten);
+            setZutaten(zutaten.filter((_, i) => i !== index));
         }
     };
 
@@ -215,36 +205,22 @@ function RezeptErstellen(){
     // Zubereitung als Array von Schritten
     const [zubereitung, setZubereitung] = useState(['']);
 
-    // Zubereitungsschritt hinzufügen
+     // Zubereitungsschritt hinzufügen modern
     const addZubereitungsschritt = () => {
-        const neueZubereitung = [];
-        for (let i = 0; i < zubereitung.length; i++) {
-            neueZubereitung.push(zubereitung[i]);
-        }
-        neueZubereitung.push('');
-        setZubereitung(neueZubereitung);
+        setZubereitung([...zubereitung, '']);
     };
 
-    // Zubereitungsschritt aktualisieren
+    // Zubereitungsschritt aktualisieren modern
     const updateZubereitungsschritt = (index, wert) => {
-        const neueZubereitung = [];
-        for (let i = 0; i < zubereitung.length; i++) {
-            neueZubereitung.push(zubereitung[i]);
-        }
+        const neueZubereitung = [...zubereitung];
         neueZubereitung[index] = wert;
         setZubereitung(neueZubereitung);
     };
 
-    // Zubereitungsschritt entfernen
+    // Zubereitungsschritt entfernen modern
     const removeZubereitungsschritt = (index) => {
         if (zubereitung.length > 1) {
-            const neueZubereitung = [];
-            for (let i = 0; i < zubereitung.length; i++) {
-                if (i !== index) {
-                    neueZubereitung.push(zubereitung[i]);
-                }
-            }
-            setZubereitung(neueZubereitung);
+            setZubereitung(zubereitung.filter((_, i) => i !== index));
         }
     };
 
