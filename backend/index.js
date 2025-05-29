@@ -23,6 +23,7 @@ app.use(cors({
            
         ], // React-URL
     credentials: true // Erlaubt das Senden von Cookies, falls benötigt
+    
 }));
 //CORS END
 //########################################################################################################
@@ -115,30 +116,70 @@ app.post('/api/login', async (req, res) => {
 //POST '/api/RezeptErstellen'
 //########################################################################################################
 //hier sollten die eigen erstellten Rezepte ankommen
-app.post('/api/RezeptErstellen', upload.single('picture'), async (req, res) => {
+app.post('/api/RezeptErstellen', authMiddleware , upload.single('bild'), async (req, res) => {
+    
+    
+    //Datenbankverbindung aufbauen: 
+    const conn = await getDatabaseConnection();
+
     try {
-        //erstmal anschauen was ankommt:
-        console.log(req.body);
-        //Geht das So?
-        //const { titel, zutaten, zubereitung, bild } = req.body
-        /* 
-        //Datenbankverbindung aufbauen: 
-        const conn = await getDatabaseConnection();
-        //Prepared Statement schicken
+        //veröfentlicht? später
+        const pub = 0;
+        //userId aus authMiddleware 
+        const userId = req.user.id;
+        
+        // Daten aus Formular extrahieren
+        const { titel, zutaten, zubereitung } = req.body;
+
+
+        const bildUrl = req.file ? req.file.filename : null;; 
+
+        
+
+        // Rezept in Datenbank speichern
         await conn.query(
-            'INSERT INTO user (username, name, email, password_hash) VALUES (?, ?, ?, ?)',
-            [username, name, email, password_hash]  
+            `INSERT INTO recipe
+            (titel, zutaten, zubereitung, bild_url, user_id, public) 
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+              titel,
+              zutaten,  
+              zubereitung,  
+              bildUrl,
+              userId,
+              pub
+            ]
         );
-        */
+        
 
         //Erfolgsmeldung
         res.status(201).json({message: 'RezeptDaten in die Datenbank gespeichert'});
         
     } catch (error) {
-        console.error(error);
-        res.status(409).json({ message: 'Server error' });
+      console.error('Fehlerdetails:', {
+          message: error.message,
+          stack: error.stack,
+          body: req.body,
+          file: req.file
+        });
+
+      // Spezifische Fehlermeldungen
+      if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: 'Ungültiger Token' });
+      }
+      if (error instanceof multer.MulterError) {
+        return res.status(400).json({ message: 'Bildfehler: ' + error.message });
+      }
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token abgelaufen' });
+      }
+      if (error.name === 'SyntaxError') {
+        return res.status(400).json({ message: 'Ungültige JSON-Daten' });
+      }
+
+      res.status(500).json({ message: 'Serverfehler beim Speichern des Rezepts' });
     } finally {
-        if (conn) conn.release();
+      if (conn) conn.release();
     }
 })
 //POST '/api/RezeptErstellen' END
