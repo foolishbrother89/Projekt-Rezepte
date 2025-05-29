@@ -196,7 +196,6 @@ function RezeptErstellen(){
                         className="flex-grow-1"
                         placeholder={`Zutat ${index + 1}`}
                         value={zutat.zutat}
-                        required
                         onChange={(e) => updateZutat(index, 'zutat', e.target.value)}
                     />
 
@@ -206,7 +205,6 @@ function RezeptErstellen(){
                         style={{ width: '25%' }}
                         placeholder="Menge"
                         value={zutat.menge}
-                        required
                         onChange={(e) => updateZutat(index, 'menge', e.target.value)}
                     />
 
@@ -215,7 +213,6 @@ function RezeptErstellen(){
                         className="flex-shrink-1"
                         style={{ width: '30%' }}
                         value={zutat.einheit}
-                        required
                         onChange={(e) => updateZutat(index, 'einheit', e.target.value)}
                     >
                         {erstelleEinheitenOptionen()}
@@ -279,7 +276,6 @@ function RezeptErstellen(){
                         placeholder={`Zubereitungsschritt ${index + 1}`}
                         value={schritt}
                         onChange={(e) => updateZubereitungsschritt(index, e.target.value)}
-                        required
                     />
                     <Button 
                         className="flex-shrink-0"

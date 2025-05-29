@@ -54,3 +54,7 @@ CREATE TABLE `user` (
 ```bash
 npm install jwt-decode
 ```
+# multer 
+```bash
+npm install multer
+```

@@ -4,14 +4,18 @@ import 'dotenv/config';
 import getDatabaseConnection from './db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
 
+// Multer speichert alle hochgeladenen Dateien automatisch im angegebenen Ordner
+const upload = multer({dest:'public/uploads/'})
 
 const app = express();
 
 // expresss JSON beibringen 
 app.use(express.json());
 
-// configure CORS
+//CORS
+//########################################################################################################
 app.use(cors({
     origin: [
             'http://aiserver.mshome.net:3000', 
@@ -19,8 +23,12 @@ app.use(cors({
         ], // React-URL
     credentials: true // Erlaubt das Senden von Cookies, falls benötigt
 }));
+//CORS END
+//########################################################################################################
 
 
+//POST '/api/register'
+//########################################################################################################
 //hier sollten die regestrierungsdaten ankommen
 app.post('/api/register', async (req, res) => {
     try {
@@ -48,7 +56,12 @@ app.post('/api/register', async (req, res) => {
         if (conn) conn.release();
     }
 })
+//POST '/api/register' END
+//########################################################################################################
 
+
+//POST '/api/login' 
+//########################################################################################################
 //HIER sollten die login anmeldedaten ankommen
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
@@ -95,7 +108,40 @@ app.post('/api/login', async (req, res) => {
     //und speichere diese später im localStorage
     res.status(200).json({ token });
 });
+//POST '/api/login' END
+//########################################################################################################
 
+//POST '/api/RezeptErstellen'
+//########################################################################################################
+//hier sollten die eigen erstellten Rezepte ankommen
+app.post('/api/RezeptErstellen', upload.single('picture'), async (req, res) => {
+    try {
+        //erstmal anschauen was ankommt:
+        console.log(req.body);
+        //Geht das So?
+        //const { titel, zutaten, zubereitung, bild } = req.body
+        /* 
+        //Datenbankverbindung aufbauen: 
+        const conn = await getDatabaseConnection();
+        //Prepared Statement schicken
+        await conn.query(
+            'INSERT INTO user (username, name, email, password_hash) VALUES (?, ?, ?, ?)',
+            [username, name, email, password_hash]  
+        );
+        */
+
+        //Erfolgsmeldung
+        res.status(201).json({message: 'RezeptDaten in die Datenbank gespeichert'});
+        
+    } catch (error) {
+        console.error(error);
+        res.status(409).json({ message: 'Server error' });
+    } finally {
+        if (conn) conn.release();
+    }
+})
+//POST '/api/RezeptErstellen' END
+//########################################################################################################
 
 // Server starten
 app.listen(process.env.PORT, () => {
