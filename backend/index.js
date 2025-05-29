@@ -5,6 +5,7 @@ import getDatabaseConnection from './db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import multer from 'multer';
+import authMiddleware from './middleware/auth.js';
 
 // Multer speichert alle hochgeladenen Dateien automatisch im angegebenen Ordner
 const upload = multer({dest:'public/uploads/'})
