@@ -1,4 +1,3 @@
-import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import { 
   Container,
@@ -9,6 +8,8 @@ import {
 } from 'react-bootstrap';
 
 function RezeptErstellen(){
+    // Errorstate
+    const [error, setError] = useState('');
 
     // hier habe ich wie bei der registrierung ein inputformular in welchen ich ein Rezept erstelle
     // Sobald ich die inputs habe schicke ich an die Backend per POST an /api/rezepte die Werte
@@ -106,7 +107,7 @@ function RezeptErstellen(){
         // An Backend Senden
         try {
             const response = await fetch(`${import.meta.env.VITE_API_SERVER_URL}/api/RezeptErstellen`, {
-                method: 'PUT',
+                method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`, // Token mitschicken im headder
                     //'Content-Type': 'application/json', wird vom formData automatisch gesetzt
@@ -118,15 +119,21 @@ function RezeptErstellen(){
 
             if (response.ok){
                 // Positive Antwort angekommen
+                alert('Rezept erfolgreich erstellt!');
+                // Form zurücksetzen
+                setTitel('');
+                setZutaten([{ zutat: '', menge: '', einheit: '' }]);
+                setZubereitung(['']);
+                setBild({ dataURL: null, fileName: null, file: null });
+                setError('');
             } else {
                 // Negative Antwort angekommen
+                setError('Fehler beim Speichern des Rezepts.');
             }
         // Keine Antwort oder falsche Adresse  
         } catch (error) {
-            setMessage('Fehler beim Speichern des Profils');
+            setError('Netzwerkfehler beim Speichern.');
         }
-
-        //Inputfelder Zurücksetzen/Leeren
     };
 
 
@@ -296,6 +303,13 @@ function RezeptErstellen(){
                 <h1>Hier erstelle ich ein Rezept</h1>
             </div>
 
+            {/* Error Anzeige */}
+            {error && (
+                <Alert variant="danger" className="mb-3">
+                    {error}
+                </Alert>
+                )}
+
             <Form onSubmit={handleSaveRecepie}>
 {/* #######################################################################################################################*/}
                 {/* Titel */}
@@ -330,6 +344,9 @@ function RezeptErstellen(){
                 </Form.Group>
 {/* #######################################################################################################################*/}
                 {/* Bild hinzufügen */}
+                <div>
+                    <p>Bild hochladen *</p>
+                </div>
                 <div>
                     {/* Inputfeld */}
                     <input 
