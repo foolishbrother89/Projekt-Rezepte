@@ -127,8 +127,8 @@ function RezeptErstellen(){
                 setBild({ dataURL: null, fileName: null, file: null });
                 setError('');
             } else {
-                // Negative Antwort angekommen
-                setError('Fehler beim Speichern des Rezepts.');
+                // Negative Antwort angekommen // nicht vergesssen in backend massage als Index zu benutzen!
+                setError(data.message ||'Fehler beim Speichern des Rezepts.');
             }
         // Keine Antwort oder falsche Adresse  
         } catch (error) {
