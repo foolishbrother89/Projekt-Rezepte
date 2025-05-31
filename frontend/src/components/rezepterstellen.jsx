@@ -21,7 +21,6 @@ function RezeptErstellen(){
     const [bild, setBild] = useState({
         dataURL: null,
         fileName: null,
-        file: null
     });
     //Bildvorschau
     function fileHandler(event){
@@ -34,7 +33,6 @@ function RezeptErstellen(){
             setBild({ 
                 dataURL: null,
                 fileName: null,
-                file: null
             });
             return;
         }
@@ -46,7 +44,6 @@ function RezeptErstellen(){
             setBild({ 
                 dataURL: null,
                 fileName: null,
-                file: null
             });
             return;
         }
@@ -63,7 +60,6 @@ function RezeptErstellen(){
             setBild({
                 dataURL: e.target.result,
                 fileName: file.name,
-                file: file
             });
         };
 

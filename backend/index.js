@@ -187,6 +187,64 @@ app.post('/api/RezeptErstellen', authMiddleware , upload.single('bild'), async (
 //POST '/api/RezeptErstellen' END
 //########################################################################################################
 
+// GET - Eigene Rezepte holen
+//########################################################################################################
+app.get('/api/eigene-rezepte', authMiddleware, async (req, res) => {
+    const conn = await getDatabaseConnection();
+    try {
+        const userId = req.user.id;
+            
+        
+        const [rezepteRows, fields] = await conn.query(
+            'SELECT * FROM recipe WHERE user_id = ?',
+            [userId]
+        );
+        
+        // DEBUG: 
+        write_log('API_EIGENE_REZEPTE rows', {
+            userId,
+            rezeptCount: rezepteRows.length,
+            firstRezept: rezepteRows.length > 0 ? {
+                id: rezepteRows[0].id,
+                titel: rezepteRows[0].titel,
+                zutaten: rezepteRows[0].zutaten,
+                zubereitung: rezepteRows[0].zubereitung
+            } : 'Keine Rezepte'
+        });
+        write_log('API_EIGENE_REZEPTE fields', {
+            userId,
+            rezeptCount: fields.length,
+            firstRezept: fields.length > 0 ? {
+                id: fields[0].id,
+                titel: fields[0].titel,
+                zutaten: fields[0].zutaten,
+                zubereitung: fields[0].zubereitung
+            } : 'Keine Rezepte'
+        });
+
+        res.status(200).json(rezepteRows);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Fehler beim Laden der Rezepte' });
+    } finally {
+        if (conn) conn.release();
+    }
+});
+/*
+Die Destrukturierung [rezepte] nimmt nur das erste Element des Ergebnisses. Wenn die Abfrage mehrere Rezepte zurückgibt, 
+werden nur die ersten genommen. Wenn nur ein Rezept vorhanden ist, wird es als einzelnes Objekt zurückgegeben
+
+conn.query() gibt ein Tupel zurück: [rows, fields]
+const [rezepte] nimmt nur die rows
+MySQL gibt bei:
+Keinen Ergebnissen: Leeres Array []
+Einem Ergebnis: Ein Array mit einem Element [{...}]
+Mehreren Ergebnissen: Array mit mehreren Elementen [{...}, {...}]
+ */
+// Rezepte holen ENDE
+//########################################################################################################
+
 // Server starten
 app.listen(process.env.PORT, () => {
   console.log('Server läuft auf Port :3001');
