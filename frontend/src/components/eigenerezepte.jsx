@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Badge, Button, Alert, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -80,10 +81,15 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
 
 // Deteilseite Verlinkung
 //########################################################################################################################################################  
-    //Plan: ich verlagere die reaktive Variable eigeneRezepte nach App.jsx
+    const navigate = useNavigate();
+    // Plan: ich verlagere die reaktive Variable eigeneRezepte nach App.jsx
     // und noch eine rezeptId, welche ich beide an diese Komponente mit settern mitsende
     const handleShowDetails = (rezeptID) =>{
-
+        // Setze die reaktive Variable const [rezeptID, setRezeptID] = useState(null);
+        setRezeptID(rezeptID);
+        // Jetzt nutze ich useNavigate um zu deteilansicht.jsx zu kommen 
+        // Wie mache ich das rooting, so das es uber App.jsx genutzt wird
+        navigate('/deteilansicht')
     }
 // Deteilseite Ende
 //########################################################################################################################################################
@@ -116,7 +122,7 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
 
             {/* Wenn es Rezepte gibt, dann Erstelle die Karten, 
             wenn nicht Text: Sie haben noch keine Rezepte erstellt. */}
-            {rezepte.length === 0 ? (
+            {eigeneRezepte.length === 0 ? (
                 <Row>
                     <Col className="text-center py-5">
                         <p className="text-muted">Sie haben noch keine Rezepte erstellt.</p>

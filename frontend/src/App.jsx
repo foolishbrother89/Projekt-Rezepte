@@ -94,9 +94,6 @@ function App() {
               {/*Erstellen*/}
               <Nav.Link as={Link} to="/rezepterstellen">Rezept Erstellen</Nav.Link>
 
-              {/*Deteilansicht -> kommt hier später weg / oder wird unsichtbar gemacht*/}
-              <Nav.Link as={Link} to="/deteilansicht">Deteilansicht</Nav.Link>
-
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -126,19 +123,22 @@ function App() {
             
             {/* Route eigeneRezepte */}
             <Route path="/eigenerezepte" 
-                   element={<EigeneRezepte />} />
-
-            {/* Route eigeneRezepte */}
-            <Route path="/rezepterstellen" 
-                   element={<RezeptErstellen 
+                   element={<EigeneRezepte 
                       eigeneRezepte={eigeneRezepte}
                       setEigeneRezepte={setEigeneRezepte}
                       setRezeptID={setRezeptID}
                    />} />
 
+            {/* Route eigeneRezepte */}
+            <Route path="/rezepterstellen" 
+                   element={<RezeptErstellen 
+                   />} />
+
             {/* Route Deteilansicht - nicht sichtbar im Navlink */}
             <Route path="/deteilansicht" 
-                   element={<Deteilansicht />} />
+                   element={<Deteilansicht 
+                      rezeptID={rezeptID}
+                   />} />
             
             {/* Route Öffentliche Rezepte */}
             <Route path="/publicrezepte" 
