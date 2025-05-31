@@ -56,21 +56,12 @@ function EigeneRezepte(){
         }
         /*
         Beispiel was in data ankommt
-        {
-            rezepte: {
-              id: 1,
-              titel: "Eier",
-              bild_url: "b0a9af2a...",
-              // ... andere Eigenschaften
-              zubereitung: Array [ "braten", "" ],
-              zutaten: Array [ {…} ]
-            }
-        }
+
         */ 
 
         
         if (response.ok) {
-            setRezepte(data.rezepte || []);
+            setRezepte(data || []);
         } else {
           setError(data.message || 'Fehler beim Laden der Rezepte.'); //Der Fallback || wenn es kein data.message gibt dann nutze den string
         }

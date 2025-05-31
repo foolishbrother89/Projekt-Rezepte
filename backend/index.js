@@ -12,7 +12,12 @@ import  {write_log}  from './utils/logger.js';
 // Multer speichert alle hochgeladenen Dateien automatisch im angegebenen Ordner
 const upload = multer({dest:'public/uploads/'})
 
+
+
 const app = express();
+
+
+
 
 // expresss JSON beibringen 
 app.use(express.json());
@@ -186,7 +191,8 @@ app.post('/api/RezeptErstellen', authMiddleware , upload.single('bild'), async (
 })
 //POST '/api/RezeptErstellen' END
 //########################################################################################################
-
+// Statische Dateien bereitstellen 
+app.use('/uploads', express.static('public/uploads'));
 // GET - Eigene Rezepte holen
 //########################################################################################################
 app.get('/api/eigene-rezepte', authMiddleware, async (req, res) => {
@@ -195,34 +201,21 @@ app.get('/api/eigene-rezepte', authMiddleware, async (req, res) => {
         const userId = req.user.id;
             
         
-        const [rezepteRows, fields] = await conn.query(
+        const rezepteRows = await conn.query(
             'SELECT * FROM recipe WHERE user_id = ?',
             [userId]
         );
         
-        // DEBUG: 
-        write_log('API_EIGENE_REZEPTE rows', {
+        write_log('API_EIGENE_REZEPTE', {
             userId,
             rezeptCount: rezepteRows.length,
-            firstRezept: rezepteRows.length > 0 ? {
-                id: rezepteRows[0].id,
-                titel: rezepteRows[0].titel,
-                zutaten: rezepteRows[0].zutaten,
-                zubereitung: rezepteRows[0].zubereitung
-            } : 'Keine Rezepte'
+            rezepte: rezepteRows 
         });
-        write_log('API_EIGENE_REZEPTE fields', {
-            userId,
-            rezeptCount: fields.length,
-            firstRezept: fields.length > 0 ? {
-                id: fields[0].id,
-                titel: fields[0].titel,
-                zutaten: fields[0].zutaten,
-                zubereitung: fields[0].zubereitung
-            } : 'Keine Rezepte'
-        });
-
         res.status(200).json(rezepteRows);
+        /*
+        rezepteRows:
+        {"userId":2,"rezeptCount":7,"rezepte":[{"id":1,"titel":"Eier","zutaten":[{"zutat":"Ei","menge":"2","einheit":"Anzahl"}],"zubereitung":["braten",""],"bild_url":"b0a9af2a397a0696766f9cbb6cc7b250","user_id":2,"public":0,"created_at":"2025-05-29T14:14:44.000Z"},{"id":2,"titel":"Spagetti","zutaten":[{"zutat":"Spagetti","menge":"200","einheit":""},{"zutat":"Olivenöl","menge":"3","einheit":"Teelöffel"},{"zutat":"Knoblauch","menge":"1","einheit":"Anzahl"}],"zubereitung":["Spagetti Kochen ","Knoblauch vorbereiten","Olivenöl hinzufügen"],"bild_url":"ab4ffd3af44dfe5f019605fcf4bf8f85","user_id":2,"public":0,"created_at":"2025-05-29T14:23:08.000Z"},{"id":3,"titel":"Nudelsalat","zutaten":[{"zutat":"Penne","menge":"200","einheit":""},{"zutat":"Mayo","menge":"3","einheit":"Esslöffel"},{"zutat":"","menge":"","einheit":"Gramm"}],"zubereitung":["Nudeln Kochen ",""],"bild_url":"16f299c2d884346c648b5ad1935dd91d","user_id":2,"public":0,"created_at":"2025-05-29T14:35:18.000Z"},{"id":4,"titel":"Nudelsalat","zutaten":[{"zutat":"Penne","menge":"200","einheit":""},{"zutat":"Mayo","menge":"3","einheit":"Esslöffel"},{"zutat":"","menge":"","einheit":"Gramm"}],"zubereitung":["Nudeln Kochen ",""],"bild_url":"81c4e14041463b361c6578d24b240d0c","user_id":2,"public":0,"created_at":"2025-05-29T14:38:36.000Z"},{"id":5,"titel":"Nudelsalat","zutaten":[{"zutat":"Penne","menge":"200","einheit":""},{"zutat":"Mayo","menge":"3","einheit":"Esslöffel"},{"zutat":"","menge":"","einheit":"Gramm"}],"zubereitung":["Nudeln Kochen ",""],"bild_url":"551571d3632a541717047fc20d0e1e21","user_id":2,"public":0,"created_at":"2025-05-29T14:39:56.000Z"},{"id":6,"titel":"Nudelsalat","zutaten":[{"zutat":"Penne","menge":"200","einheit":""},{"zutat":"Mayo","menge":"3","einheit":"Esslöffel"},{"zutat":"","menge":"","einheit":"Gramm"}],"zubereitung":["Nudeln Kochen ",""],"bild_url":"277b9a35d85a4b4757fa36e374828c4a","user_id":2,"public":0,"created_at":"2025-05-29T14:43:44.000Z"},{"id":7,"titel":"Nudelsalat","zutaten":[{"zutat":"Penne","menge":"200","einheit":""},{"zutat":"Mayo","menge":"3","einheit":"Esslöffel"},{"zutat":"","menge":"","einheit":"Gramm"}],"zubereitung":["Nudeln Kochen ",""],"bild_url":"ff550459466460a68a463a20ed767d40","user_id":2,"public":0,"created_at":"2025-05-29T15:00:24.000Z"}]}
+        */
 
     } catch (error) {
         console.error(error);
