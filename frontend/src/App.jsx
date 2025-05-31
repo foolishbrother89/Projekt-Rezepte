@@ -12,7 +12,6 @@ import Login from './components/login';
 import EigeneRezepte from './components/eigenerezepte';
 import RezeptErstellen from './components/rezepterstellen';
 import Deteilansicht from './components/deteilansicht';
-import Rezeptebearbeiten from './components/rezeptebearbeiten';
 import PublicRezepte from './components/publicrezepte';
 import RezepteBearbeiten from './components/rezeptebearbeiten';
 
@@ -22,6 +21,14 @@ function App() {
   
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
+
+  // Feld für eigene Rezepte
+  const [eigeneRezepte, setEigeneRezepte] = useState([]);
+
+  // Feld für den Aktuel angeklickten Rezept ID für die deteilansicht.jsx
+  // Der Knopf Deteils befindet sich in eigenerezepte.jsx dort schicke ich den setter mit 
+  const [rezeptID, setRezeptID] = useState(null);
+
   /* 
     Wenn die Seite neu geladen wird, verlieren wir den React-State 
     (isLoggedIn und userId werden zurückgesetzt).
@@ -123,9 +130,13 @@ function App() {
 
             {/* Route eigeneRezepte */}
             <Route path="/rezepterstellen" 
-                   element={<RezeptErstellen />} />
+                   element={<RezeptErstellen 
+                      eigeneRezepte={eigeneRezepte}
+                      setEigeneRezepte={setEigeneRezepte}
+                      setRezeptID={setRezeptID}
+                   />} />
 
-            {/* Route eigeneRezepte */}
+            {/* Route Deteilansicht - nicht sichtbar im Navlink */}
             <Route path="/deteilansicht" 
                    element={<Deteilansicht />} />
             

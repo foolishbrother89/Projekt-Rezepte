@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Badge, Button, Alert, Spinner } from 'react-bootstrap';
 
-function EigeneRezepte(){
+
+
+function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
 
     // Hier sollen die eigenen Rezepte angezeigt werden 
     // Also frage ich die backend: hole mir alle rezepte von diesem user
@@ -25,8 +27,6 @@ function EigeneRezepte(){
 // Rezepte anfragen an die backend
 //########################################################################################################################################################
     
-    // Feld für Rezepte
-    const [rezepte, setRezepte] = useState([]);
     // Feld für Error
     const [error, setError] = useState(null);
 
@@ -66,7 +66,7 @@ function EigeneRezepte(){
 
         
         if (response.ok) {
-            setRezepte(data || []);
+            setEigeneRezepte(data || []);
         } else {
           setError(data.message || 'Fehler beim Laden der Rezepte.'); //Der Fallback || wenn es kein data.message gibt dann nutze den string
         }
@@ -77,6 +77,17 @@ function EigeneRezepte(){
 
 // Rezepte anfragen Ende
 //########################################################################################################################################################
+
+// Deteilseite Verlinkung
+//########################################################################################################################################################  
+    //Plan: ich verlagere die reaktive Variable eigeneRezepte nach App.jsx
+    // und noch eine rezeptId, welche ich beide an diese Komponente mit settern mitsende
+    const handleShowDetails = (rezeptID) =>{
+
+    }
+// Deteilseite Ende
+//########################################################################################################################################################
+    
     return (
         <Container fluid className="py-4">
             <Row className="mb-4">
@@ -114,7 +125,7 @@ function EigeneRezepte(){
                 </Row>
             ) : (
                 <Row>
-                    {rezepte.map((rezept) => (
+                    {eigeneRezepte.map((rezept) => (
                         <Col key={rezept.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
                             <Card className="h-100 shadow-sm recipe-card">
                                 {/* Rezept Bild */}
@@ -159,6 +170,7 @@ function EigeneRezepte(){
                                                 variant="outline-primary" 
                                                 size="sm"
                                                 className="mb-1"
+                                                onClick={() => handleShowDetails(rezept.id)}
                                               >
                                               Details
                                             </Button>
