@@ -83,13 +83,45 @@ function EigeneRezepte(){
 //########################################################################################################################################################
     return (
         <div>
-
             <div>
                 <h1>Hier sehen Sie ihre Rezepte</h1>
             </div>
 
+            {/* Rezepte Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {rezepte.map((rezept) => {
+                    const zutaten = rezept.zutaten;
+                    const zubereitung = rezept.zubereitung;
+            
+                    return (
+                      <div key={rezept.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                        {/* Bild */}
+                        {rezept.bild_url && (
+                          <img 
+                            src={`${import.meta.env.VITE_API_SERVER_URL}/uploads/${rezept.bild_url}`}
+                            alt={rezept.titel}
+                            className="w-full h-48 object-cover rounded-t-lg"
+                          />
+                        )}
+
+                        <div className="p-4">
+                          {/* Titel und Status */}
+                          <div className="flex justify-between items-start mb-3">
+                            <h3 className="text-xl font-semibold text-gray-800 flex-1 mr-2">{rezept.titel}</h3>
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                              rezept.public 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {rezept.public ? 'Öffentlich' : 'Privat'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+              })}
+            </div>
         </div>
     );
 }
-
 export default EigeneRezepte;
