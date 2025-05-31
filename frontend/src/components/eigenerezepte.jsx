@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import { Container, Row, Col, Card, Badge, Button, Alert, Spinner } from 'react-bootstrap';
 
 function EigeneRezepte(){
 
@@ -17,6 +17,11 @@ function EigeneRezepte(){
 
     //Debug code an oder ausmachen!
     const debug = true;
+
+    // Rezepte werden geladen
+    const [loading, setLoading] = useState(true);
+
+
 // Rezepte anfragen an die backend
 //########################################################################################################################################################
     
@@ -73,46 +78,201 @@ function EigeneRezepte(){
 // Rezepte anfragen Ende
 //########################################################################################################################################################
     return (
-        <div>
-            <div>
-                <h1>Hier sehen Sie ihre Rezepte</h1>
-            </div>
+        <Container fluid className="py-4">
+            <Row className="mb-4">
+                <Col>
+                    <div className="d-flex justify-content-between align-items-center">
+                        <h1 className="h3 mb-0">Meine Rezepte</h1>
+                        {/* Button  Neues Rezept erstellen variant="success" 
+                        braucht noch einen onClick Verlinkung zu rezepterstellen.jsx über App.jsx*/}
+                        <Button variant="success" size="sm">
+                            + Neues Rezept erstellen
+                        </Button>
+                    </div>
+                </Col>
+            </Row>
 
-            {/* Rezepte Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {rezepte.map((rezept) => {
-                    const zutaten = rezept.zutaten;
-                    const zubereitung = rezept.zubereitung;
-            
-                    return (
-                      <div key={rezept.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                        {/* Bild */}
-                        {rezept.bild_url && (
-                          <img 
-                            src={`${import.meta.env.VITE_API_SERVER_URL}/uploads/${rezept.bild_url}`}
-                            alt={rezept.titel}
-                            className="w-full h-48 object-cover rounded-t-lg"
-                          />
-                        )}
+            {/* Error */}
+            {error && (
+                <Row className="mb-3">
+                    <Col>
+                        <Alert variant="danger" dismissible onClose={() => setError(null)}>
+                            {error}
+                        </Alert>
+                    </Col>
+                </Row>
+            )}
 
-                        <div className="p-4">
-                          {/* Titel und Status */}
-                          <div className="flex justify-between items-start mb-3">
-                            <h3 className="text-xl font-semibold text-gray-800 flex-1 mr-2">{rezept.titel}</h3>
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              rezept.public 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {rezept.public ? 'Öffentlich' : 'Privat'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-              })}
-            </div>
-        </div>
+            {/* Wenn es Rezepte gibt, dann Erstelle die Karten, 
+            wenn nicht Text: Sie haben noch keine Rezepte erstellt. */}
+            {rezepte.length === 0 ? (
+                <Row>
+                    <Col className="text-center py-5">
+                        <p className="text-muted">Sie haben noch keine Rezepte erstellt.</p>
+                        <Button variant="primary">Erstes Rezept erstellen</Button>
+                    </Col>
+                </Row>
+            ) : (
+                <Row>
+                    {rezepte.map((rezept) => (
+                        <Col key={rezept.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+                            <Card className="h-100 shadow-sm recipe-card">
+                                {/* Rezept Bild */}
+                                <div className="recipe-image-container">
+                                    {rezept.bild_url ? (
+                                        <Card.Img 
+                                            variant="top" 
+                                            src={`${import.meta.env.VITE_API_SERVER_URL}/uploads/${rezept.bild_url}`}
+                                            alt={rezept.titel}
+                                            className="recipe-image"
+                                        />
+                                    ) : (
+                                        <div className="recipe-placeholder d-flex align-items-center justify-content-center">
+                                            <span className="text-muted">Kein Bild</span>
+                                        </div>
+                                    )}
+                                    
+                                    {/* Status Badge im custom CSS absolute Position oben Rechts*/}
+                                    <div className="recipe-status-badge">
+                                        <Badge 
+                                            bg={rezept.public ? 'success' : 'secondary'}
+                                            className="small"
+                                        >
+                                            {rezept.public ? '📍 Öffentlich' : '🔒 Privat'}
+                                        </Badge>
+                                    </div>
+                                </div>
+
+                                <Card.Body className="d-flex flex-column">
+                                    {/* Titel */}
+                                    <Card.Title className="recipe-title text-truncate" title={rezept.titel}>
+                                        {rezept.titel}
+                                    </Card.Title>
+
+                                    {/* Action Knöpfe */}
+                                    <div className="mt-auto">
+                                        <div className="d-grid gap-1">
+                                            {/* Details Knopf onClick -> braucht die rezept ID ändert den state von receptID in App.jsx (muss ich noch implementieren)
+                                              ruft eine neue componente deteilansicht.jsx (muss ich auch noch machen)
+                                            */}
+                                            <Button 
+                                                variant="outline-primary" 
+                                                size="sm"
+                                                className="mb-1"
+                                              >
+                                              Details
+                                            </Button>
+
+                                            {/* Bearbeiten Knopf onClick -> 
+                                            wieder je nach rezept ID verlinkung zu rezeptbearbeiten.jsx verlinkt
+                                            mach ich das so? muss ich noch überlegen */}
+                                            <Button 
+                                                variant="outline-secondary" 
+                                                size="sm"
+                                                className="mb-1"
+                                              >
+                                              Bearbeiten
+                                            </Button>
+                                        
+                                            {/* Veröffentlichn Knopf macht eine Backend anfrage der soll mal den wert in public zu 1 setzen*/}
+                                            <Button 
+                                                variant={rezept.public ? "outline-warning" : "outline-success"}
+                                                size="sm"
+                                                className="mb-1"
+                                                onClick={() => handleTogglePublic(rezept.id, rezept.public)}
+                                              >
+                                              {rezept.public ? 'Verstecken' : 'Veröffentlichen'}
+                                            </Button>
+                                          
+                                            {/* Lösch knopf an die Backend -> der Soll mal bitte das Rezept in der datenbank Löschen */}
+                                            <Button 
+                                                variant="outline-danger" 
+                                                size="sm"
+                                                onClick={() => handleDelete(rezept.id)}
+                                            >
+                                                🗑️ Löschen
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            )}
+
+            {/* Custom CSS Styles */}
+            <style jsx>{`
+                .recipe-card {
+                    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+                    border: 1px solid #e0e0e0;
+                }
+                
+                .recipe-card:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+                }
+                
+                .recipe-image-container {
+                    position: relative;
+                    height: 180px;
+                    overflow: hidden;
+                }
+                
+                .recipe-image {
+                    width: 100%;
+                    height: 180px;
+                    object-fit: cover;
+                    transition: transform 0.3s ease;
+                }
+                
+                .recipe-card:hover .recipe-image {
+                    transform: scale(1.05);
+                }
+                
+                .recipe-placeholder {
+                    width: 100%;
+                    height: 180px;
+                    background-color: #f8f9fa;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+                
+                .recipe-status-badge {
+                    position: absolute;
+                    top: 8px;
+                    right: 8px;
+                    z-index: 1;
+                }
+                
+                .recipe-title {
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    color: #333;
+                    margin-bottom: 0.5rem;
+                    line-height: 1.3;
+                }
+                
+                .recipe-meta {
+                    border-bottom: 1px solid #f0f0f0;
+                    padding-bottom: 0.5rem;
+                }
+                
+                @media (max-width: 576px) {
+                    .recipe-image-container {
+                        height: 150px;
+                    }
+                    
+                    .recipe-image {
+                        height: 150px;
+                    }
+                    
+                    .recipe-placeholder {
+                        height: 150px;
+                    }
+                }
+            `}</style>
+        </Container>
     );
 }
+
 export default EigeneRezepte;
