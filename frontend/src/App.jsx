@@ -12,6 +12,9 @@ import Login from './components/login';
 import EigeneRezepte from './components/eigenerezepte';
 import RezeptErstellen from './components/rezepterstellen';
 import Deteilansicht from './components/deteilansicht';
+import Rezeptebearbeiten from './components/rezeptebearbeiten';
+import PublicRezepte from './components/publicrezepte';
+import RezepteBearbeiten from './components/rezeptebearbeiten';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -63,6 +66,8 @@ function App() {
             <Nav className="me-auto" activeKey={location.pathname}>
            
               <Nav.Link as={Link} to="/">Home</Nav.Link>
+              {/*Öffentliche Rezepte*/}
+              <Nav.Link as={Link} to="publicrecepte">Rezepte</Nav.Link>
 
               {/*Regestrieren*/}
               <Nav.Link as={Link} to="/register">Registrieren</Nav.Link>
@@ -123,6 +128,17 @@ function App() {
             {/* Route eigeneRezepte */}
             <Route path="/deteilansicht" 
                    element={<Deteilansicht />} />
+            
+            {/* Route Öffentliche Rezepte */}
+            <Route path="/publicrezepte" 
+                   element={<PublicRezepte />} />
+            
+            {/* Route Rezepte bearbeiten -> nicht sichtber im Navlink 
+                aber rezeptebearbeiten.jsx sollte diese route beinflussen können
+                wie mach ich das?
+            */}
+            <Route path="/rezeptebearbeiten" 
+                   element={<RezepteBearbeiten />} />
 
           </Routes>
         </main>
