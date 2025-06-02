@@ -73,7 +73,7 @@ function Register() {
 
         //hier schicke ich die werte an /api/register per POST anfrage 
         try {
-            const response = await fetch(`http://aiserver.mshome.net:3001/api/register`, {
+            const response = await fetch(`${import.meta.env.VITE_API_SERVER_URL}/api/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -115,7 +115,7 @@ app.post('/api/login', async (req, res) => {
     
     //Ich schicke den erstelten token und die user id zurück 
     //und speichere diese später im localStorage
-    res.status(200).json({ token });
+    res.status(200).json({ token, userId: user.id});
 });
 //POST '/api/login' END
 //########################################################################################################

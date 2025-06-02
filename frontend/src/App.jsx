@@ -46,7 +46,7 @@ function App() {
         setIsLoggedIn(true);
         setUserId(storedUserId);
     }
-  }, [navigate]);
+  }, []);
 
   // Logout löscht localStorage werte und setzt die reaktive Variable isLoggedIn 
   // zu false und navigiert zur startseite
@@ -138,6 +138,7 @@ function App() {
             <Route path="/deteilansicht" 
                    element={<Deteilansicht 
                       rezeptID={rezeptID}
+                      eigeneRezepte={eigeneRezepte}
                    />} />
             
             {/* Route Öffentliche Rezepte */}

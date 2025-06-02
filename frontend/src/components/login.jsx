@@ -18,7 +18,7 @@ function Login({isLoggedIn, setIsLoggedIn}){
         const password = e.target.elements.password.value;
         //Jetzt muss ich die backend fragen, ob es diesen benutzer kennt
         try {
-            const response = await fetch(`http://aiserver.mshome.net:3001/api/login`, {
+            const response = await fetch(`${import.meta.env.VITE_API_SERVER_URL}/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
