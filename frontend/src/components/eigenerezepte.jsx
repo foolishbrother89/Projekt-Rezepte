@@ -97,7 +97,7 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
 // Löschen vom Rezept Knopf
 //########################################################################################################################################################
     // Anfrage an die backend, der soll mal bitte Das Rezept Löschen abhängig vom rezeptID mit Autorization!
-    const handleDelete = async () => {
+    const handleDelete = async (rezeptID) => {
       try {
         // User eingelogt?
         const token = localStorage.getItem('token');
@@ -106,17 +106,15 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
           return;
         }
 
-        // 
         const response = await fetch(`${import.meta.env.VITE_API_SERVER_URL}/api/rezept-loeschen`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
             //dammit die backend weiß was er er löschen soll
             body: JSON.stringify({ rezeptID })
-          }
+          
         });
 
         const data = await response.json();
