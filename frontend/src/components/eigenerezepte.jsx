@@ -93,7 +93,67 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
     }
 // Deteilseite Ende
 //########################################################################################################################################################
-    
+
+// Löschen vom Rezept Knopf
+//########################################################################################################################################################
+    // Anfrage an die backend, der soll mal bitte Das Rezept Löschen abhängig vom rezeptID mit Autorization!
+    const handleDelete = async () => {
+      try {
+        // User eingelogt?
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('Sie müssen eingeloggt sein, um Ihre Rezepte zu löschen.');
+          return;
+        }
+
+        // 
+        const response = await fetch(`${import.meta.env.VITE_API_SERVER_URL}/api/rezept-loeschen`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: {
+            //dammit die backend weiß was er er löschen soll
+            body: JSON.stringify({ rezeptID })
+          }
+        });
+
+        const data = await response.json();
+
+        // Sowas wie erfolgreich gelöscht
+        if(debug){
+            console.log("API Response Löschen:", data.message);
+        }
+
+        if (response.ok) {
+            // wenns in der Datenbank gelöscht ist alle Rezepte neu holen 'komponente neu laden? oder eigenRezepte leeren und fetchEigeneRezepte(); ausführen'? 
+            // Oder aus eigenRezepte löschen? zweiteres müsste effizienter sein
+
+            let neueListe = []; // Leere Liste für Rezepte
+
+            for (let i = 0; i < eigeneRezepte.length; i++) {
+              const rezept = eigeneRezepte[i];
+            
+              // alle Rezepte außer die mit der rezeptID in eine neue Liste
+              if (rezept.id !== rezeptID) {
+                neueListe.push(rezept);
+              }
+            }
+            // Neue Liste in den State setzen
+            setEigeneRezepte(neueListe);
+        // Fehler beim Response
+        } else {
+          setError(data.message || 'Fehler beim Response.'); 
+        }
+    // Backend keine Antwort:
+      } catch (error) {
+        setError('Netzwerkfehler beim Laden der Rezepte.');
+      }
+    };
+
+// Löschen ENDE
+//########################################################################################################################################################
     return (
         <Container fluid className="py-4">
             <Row className="mb-4">
@@ -169,9 +229,7 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
                                     {/* Action Knöpfe */}
                                     <div className="mt-auto">
                                         <div className="d-grid gap-1">
-                                            {/* Details Knopf onClick -> braucht die rezept ID ändert den state von receptID in App.jsx (muss ich noch implementieren)
-                                              ruft eine neue componente deteilansicht.jsx (muss ich auch noch machen)
-                                            */}
+                                            {/* Details Knopf onClick -> braucht die rezept ID ändert den state von receptID */}
                                             <Button 
                                                 variant="outline-primary" 
                                                 size="sm"
