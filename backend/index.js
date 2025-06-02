@@ -238,6 +238,37 @@ Mehreren Ergebnissen: Array mit mehreren Elementen [{...}, {...}]
 // Rezepte holen ENDE
 //########################################################################################################
 
+
+// Delete /api/rezept-loeschen
+//########################################################################################################
+
+app.delete('/api/rezept-loeschen', authMiddleware, async (req, res) =>{
+    const userId = req.user.id;
+    // Rezeptid ausm body holen, um das richtige zu löschen
+    const { rezeptID } = req.body;
+    const conn = await getDatabaseConnection();
+    try{
+        const geloeschtstatus = await conn.query(
+            'DELETE FROM recipe WHERE user_id = ? AND id = ?',
+            [ userId, rezeptID ]
+        );
+        
+        if (geloeschtstatus.affectedRows > 0) {
+            res.status(200).json({ message: 'Rezept erfolgreich gelöscht.' });
+        } else {
+            res.status(404).json({ message: 'Rezept nicht gefunden.' });
+        }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Fehler beim Löschen des Rezepts' });
+    } finally {
+        if (conn) conn.release();
+    }
+});
+// Delete ENDE
+//########################################################################################################
+
 // Server starten
 app.listen(process.env.PORT, () => {
   console.log('Server läuft auf Port :3001');
