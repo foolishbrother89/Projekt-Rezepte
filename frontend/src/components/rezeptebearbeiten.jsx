@@ -300,14 +300,108 @@ function RezepteBearbeiten({rezeptID, eigeneRezepte, setEigeneRezepte}){
 
     return(
         <div>
+            {/* Seiten Titel */}
+            <div>
+                <h1>Rezept bearbeiten: {rezept?.titel}</h1>
+            </div>
 
-          <div>
+            {/* Header mit Zurück-Button */}
+            <Row className="mb-4">
+                <Col>
+                    <div className="d-flex align-items-center gap-3">
+                        <Button 
+                            variant="outline-secondary" 
+                            onClick={handleGoBack}
+                        >
+                            Zurück
+                        </Button>
+                    </div>
+                </Col>
+            </Row>
 
-          </div>
+            {/* Error Anzeige */}
+            {error && (
+                <Alert variant="danger" className="mb-3">
+                    {error}
+                </Alert>
+            )}
 
+            <Form onSubmit={handleUpdateRecepie}>
+                {/* Titel */}
+                <Form.Group className="mb-3">
+                    <Form.Label>Titel *</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="titel"
+                        placeholder="Titel eingeben"
+                        value={titel}
+                        onChange={(e) => setTitel(e.target.value)}
+                        required
+                    />
+                </Form.Group>
 
+                {/* Zutaten */}
+                <Form.Group className="mb-3">
+                    <Form.Label>Zutaten *</Form.Label>
+                    {erstelleZutatenFelder()}
+                    <Button onClick={addZutat} variant="outline-primary" size="sm">
+                        Zutat hinzufügen
+                    </Button>
+                </Form.Group>
+
+                {/* Zubereitung */}
+                <Form.Group className="mb-4">
+                    <Form.Label>Zubereitung *</Form.Label>
+                    {erstelleZubereitungsFelder()}
+                    <Button onClick={addZubereitungsschritt} variant="outline-primary" size="sm">
+                        Zubereitungsschritt hinzufügen
+                    </Button>
+                </Form.Group>
+
+                {/* Bild */}
+                <div>
+                    <p>Bild (optional - leer lassen um aktuelles Bild zu behalten)</p>
+                </div>
+                <div>
+                    <input 
+                        type="file"
+                        onChange={fileHandler} 
+                        accept="image/*"
+                    />
+                    
+                    {/* Bildvorschau */}
+                    {bild.dataURL && (
+                        <div style={{ marginTop: '1rem' }}>
+                            <h4>Bildvorschau:</h4>
+                            <img 
+                                src={bild.dataURL} 
+                                alt="Ausgewähltes Bild"
+                                style={{ 
+                                    maxWidth: '100%', 
+                                    maxHeight: '300px',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '4px'
+                                }}
+                            />
+                            {bild.fileName && (
+                                <p style={{ marginTop: '0.5rem', color: '#666' }}>
+                                    {bild.fileName}
+                                </p>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Submit Button */}
+                <br />
+                <div>
+                    <Button variant="primary" type="submit" size="m">
+                        Rezept aktualisieren
+                    </Button>
+                </div>
+            </Form>
         </div>
     );
-};
+}
 
 export default RezepteBearbeiten;

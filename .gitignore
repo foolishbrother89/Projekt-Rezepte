@@ -5,3 +5,4 @@ public
 backend/logs
 logs
 app.log
+backend/logs/app.log
