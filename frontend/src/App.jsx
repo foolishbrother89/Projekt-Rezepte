@@ -74,7 +74,7 @@ function App() {
            
               <Nav.Link as={Link} to="/">Home</Nav.Link>
               {/*Öffentliche Rezepte*/}
-              <Nav.Link as={Link} to="publicrecepte">Rezepte</Nav.Link>
+              <Nav.Link as={Link} to="/publicrezepte">Rezepte</Nav.Link>
 
               {/*Regestrieren*/}
               <Nav.Link as={Link} to="/register">Registrieren</Nav.Link>
@@ -92,7 +92,7 @@ function App() {
               {isLoggedIn && <Nav.Link as={Link} to="/eigenerezepte">Eigene Rezepte</Nav.Link>}
 
               {/*Erstellen*/}
-              <Nav.Link as={Link} to="/rezepterstellen">Rezept Erstellen</Nav.Link>
+              {isLoggedIn &&<Nav.Link as={Link} to="/rezepterstellen">Rezept Erstellen</Nav.Link>}
 
             </Nav>
           </Navbar.Collapse>

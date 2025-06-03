@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Badge, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import '../App.css';
 
 
 
@@ -23,8 +24,7 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
     //Debug code an oder ausmachen!
     const debug = true;
 
-    // Rezepte werden geladen
-    const [loading, setLoading] = useState(true);
+  
 
 
 // Rezepte anfragen an die backend
@@ -347,76 +347,7 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
                 </Row>
             )}
 
-            {/* Custom CSS Styles */}
-            <style jsx="true">{`
-                .recipe-card {
-                    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-                    border: 1px solid #e0e0e0;
-                }
-                
-                .recipe-card:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-                }
-                
-                .recipe-image-container {
-                    position: relative;
-                    height: 180px;
-                    overflow: hidden;
-                }
-                
-                .recipe-image {
-                    width: 100%;
-                    height: 180px;
-                    object-fit: cover;
-                    transition: transform 0.3s ease;
-                }
-                
-                .recipe-card:hover .recipe-image {
-                    transform: scale(1.05);
-                }
-                
-                .recipe-placeholder {
-                    width: 100%;
-                    height: 180px;
-                    background-color: #f8f9fa;
-                    border-bottom: 1px solid #e0e0e0;
-                }
-                
-                .recipe-status-badge {
-                    position: absolute;
-                    top: 8px;
-                    right: 8px;
-                    z-index: 1;
-                }
-                
-                .recipe-title {
-                    font-size: 1.1rem;
-                    font-weight: 600;
-                    color: #333;
-                    margin-bottom: 0.5rem;
-                    line-height: 1.3;
-                }
-                
-                .recipe-meta {
-                    border-bottom: 1px solid #f0f0f0;
-                    padding-bottom: 0.5rem;
-                }
-                
-                @media (max-width: 576px) {
-                    .recipe-image-container {
-                        height: 150px;
-                    }
-                    
-                    .recipe-image {
-                        height: 150px;
-                    }
-                    
-                    .recipe-placeholder {
-                        height: 150px;
-                    }
-                }
-            `}</style>
+
         </Container>
     );
 }
