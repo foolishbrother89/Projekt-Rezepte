@@ -269,6 +269,110 @@ app.delete('/api/rezept-loeschen', authMiddleware, async (req, res) =>{
 // Delete ENDE
 //########################################################################################################
 
+
+// PUT '/api/RezeptBearbeiten'
+//########################################################################################################
+//hier sollten die bearbeiteten Rezepte ankommen
+app.put('/api/RezeptBearbeiten', authMiddleware, upload.single('bild'), async (req, res) => {
+    
+    //Datenbankverbindung aufbauen: 
+    const conn = await getDatabaseConnection();
+
+    try {
+        //userId aus authMiddleware 
+        const userId = req.user.id;
+        
+        // Daten aus Formular extrahieren
+        const { titel, zutaten, zubereitung, rezeptID} = req.body;
+
+        // Prüfen ob das Rezept dem Benutzer gehört
+        const existingRecipe = await conn.query(
+            'SELECT * FROM recipe WHERE id = ? AND user_id = ?',
+            [rezeptID, userId]
+        );
+
+        if (!existingRecipe) {
+            return res.status(404).json({ 
+                message: 'Rezept nicht gefunden oder keine Berechtigung' 
+            });
+        }
+
+        // Bild-Update Logic
+        let bildUrl = existingRecipe.bild_url; // Behalte das alte Bild als Standard
+        write_log('altes Bild', bildUrl);
+        // altes Bild: undefined
+
+        write_log('req.file', req.file);
+        //req.file: {"fieldname":"bild","originalname":"eckis-italienischer-nudelsalat-mit-pesto.webp",
+        // "encoding":"7bit","mimetype":"image/webp","destination":"public/uploads/",
+        // "filename":"708aba03f68c8f9be2b8dcd2b1dec49e",
+        // "path":"public/uploads/708aba03f68c8f9be2b8dcd2b1dec49e","size":62254}
+
+        // Wenn ein neues Bild hochgeladen wurde, verwende das neue
+        if (req.file) {
+            bildUrl = req.file.filename;
+        }
+        
+
+        // Rezept in Datenbank aktualisieren
+        const updateResult = await conn.query(
+            `UPDATE recipe 
+             SET titel = ?, zutaten = ?, zubereitung = ?, bild_url = ?
+             WHERE id = ? AND user_id = ?`,
+            [
+              titel,
+              zutaten,  
+              zubereitung,  
+              bildUrl,
+              rezeptID,
+              userId
+            ]
+        );
+
+        if (updateResult.affectedRows === 0) {
+            return res.status(404).json({ 
+                message: 'Rezept konnte nicht aktualisiert werden' 
+            });
+        }
+
+        //Erfolgsmeldung mit aktualisierten Daten
+        res.status(200).json({
+            message: 'Rezept erfolgreich aktualisiert',
+        });
+        
+    } catch (error) {
+      console.error('Fehlerdetails beim Rezept-Update:', {
+          message: error.message,
+          stack: error.stack,
+          body: req.body,
+          file: req.file
+        });
+
+      // Spezifische Fehlermeldungen
+      if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: 'Ungültiger Token' });
+      }
+      if (error instanceof multer.MulterError) {
+        return res.status(400).json({ message: 'Bildfehler: ' + error.message });
+      }
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token abgelaufen' });
+      }
+      if (error.name === 'SyntaxError') {
+        return res.status(400).json({ message: 'Ungültige JSON-Daten' });
+      }
+
+      res.status(500).json({ message: 'Serverfehler beim Aktualisieren des Rezepts' });
+    } finally {
+      if (conn) conn.release();
+    }
+});
+//PUT '/api/RezeptBearbeiten' END
+//########################################################################################################
+
+
+
+
 // Server starten
 app.listen(process.env.PORT, () => {
   console.log('Server läuft auf Port :3001');

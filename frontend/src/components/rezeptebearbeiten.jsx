@@ -38,6 +38,7 @@ function RezepteBearbeiten({rezeptID, eigeneRezepte, setEigeneRezepte}){
     const [bild, setBild] = useState({
         dataURL: null,
         fileName: null,
+        file: null
     });
 
     // Einheiten für Dropdown
@@ -76,6 +77,7 @@ function RezepteBearbeiten({rezeptID, eigeneRezepte, setEigeneRezepte}){
                 setBild({
                     dataURL: foundRezept.bildUrl,
                     fileName: 'Aktuelles Bild',
+                    file: null
                 });
             }
             
@@ -111,6 +113,7 @@ function RezepteBearbeiten({rezeptID, eigeneRezepte, setEigeneRezepte}){
             setBild({
                 dataURL: e.target.result,
                 fileName: file.name,
+                file: file
             });
         };
         fileLeser.readAsDataURL(file);
@@ -237,7 +240,10 @@ function RezepteBearbeiten({rezeptID, eigeneRezepte, setEigeneRezepte}){
         formData.append('titel', titel);
         formData.append('zutaten', JSON.stringify(zutaten));
         formData.append('zubereitung', JSON.stringify(zubereitung));
-        
+
+        // rezeptID mitsenden
+        formData.append('rezeptID', rezeptID);
+
         // Nur neues Bild anhängen, wenn eins ausgewählt wurde
         if (bild.file) {
             formData.append('bild', bild.file);
