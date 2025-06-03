@@ -14,7 +14,9 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
     
     // Jedes Element in der Liste hat -> Die Liste wird später zu Karten gemacht
             // eine Detailansicht Knopf  -> Verlinkung zu deteilansicht.jsx
-            // einen Veröfentlichen Knopf -> noch keine idee wie das funktionieren soll - Die veröffentlichten Rezepte haben nur ein Deteilansicht Knopf
+            // einen Veröfentlichen Knopf  -> Die veröffentlichten Rezepte haben nur ein Deteilansicht Knopf im publicrezepte.jsx 
+            // Die Karten sehen an sich aber wie in eigenerezepte.jsx aus -> also Send ich an die Datenbak die Info das, dass aktuelle Rezept public ist mehr nicht erstmal 
+
             // einen Lösch Knopf -> DELETE anfrage an die Backend user id muss mitgeschickt werden
             // einen Bearbeiten Knopf -> wiederverwendung von der erstellen form?
 
@@ -158,6 +160,67 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
 
 // Löschen ENDE
 //########################################################################################################################################################
+
+// Veröffentlichen
+//########################################################################################################################################################
+    // Veröffentlichen / Verstecken Funktion
+    const handleTogglePublic = async (rezeptID, currentPublicStatus) => {
+        try {
+            // User eingeloggt?
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError('Sie müssen eingeloggt sein, um Rezepte zu veröffentlichen.');
+                return;
+            }
+
+            // Neuer Status ist das Gegenteil vom aktuellen Status
+            const newPublicStatus = !currentPublicStatus;
+
+            // API Anfrage an Backend
+            const response = await fetch(`${import.meta.env.VITE_API_SERVER_URL}/api/RezeptPublicToggle`, {
+                method: 'PUT', // oder PATCH, je nach Backend Implementation
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    rezeptID: rezeptID,
+                    publicrecepie: newPublicStatus 
+                })
+            });
+
+            const data = await response.json();
+
+            // Debug Ausgabe
+            if (debug) {
+                console.log("API Antwort Toggle Public:", data);
+            }
+
+            if (response.ok) {
+                // Lokalen State aktualisieren ohne kompletten Reload
+                const updatedRezepte = eigeneRezepte.map(rezept => {
+                    if (rezept.id === rezeptID) {
+                        return {
+                            ...rezept,
+                            public: newPublicStatus
+                        };
+                    }
+                    return rezept;
+                });
+
+                setEigeneRezepte(updatedRezepte);
+
+            } else {
+                setError(data.message || 'Fehler beim Ändern des Veröffentlichungsstatus.');
+            }
+
+        } catch (error) {
+            console.error('Fehler beim Toggle Public:', error);
+            setError('Netzwerkfehler beim Ändern des Veröffentlichungsstatus.');
+        }
+    };
+// Veröffentlichen ENDE
+//########################################################################################################################################################
     return (
         <Container fluid className="py-4">
             <Row className="mb-4">
@@ -166,7 +229,9 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
                         <h1 className="h3 mb-0">Meine Rezepte</h1>
                         {/* Button  Neues Rezept erstellen variant="success" 
                         braucht noch einen onClick Verlinkung zu rezepterstellen.jsx über App.jsx*/}
-                        <Button variant="success" size="sm">
+                        <Button variant="success" size="sm"
+                                onClick={()=>{navigate('/rezepterstellen')}}
+                        >
                             + Neues Rezept erstellen
                         </Button>
                     </div>

@@ -377,6 +377,68 @@ app.put('/api/RezeptBearbeiten', authMiddleware, upload.single('bild'), async (r
 //PUT '/api/RezeptBearbeiten' END
 //########################################################################################################
 
+// PUT '/api/RezeptPublicToggle' Veröffentlichen
+//########################################################################################################
+
+app.put('/api/RezeptPublicToggle', authMiddleware, async (req, res) => {
+    
+    //Datenbankverbindung aufbauen: 
+    const conn = await getDatabaseConnection();
+
+    try {
+        //userId aus authMiddleware 
+        const userId = req.user.id;
+        
+        const { rezeptID, publicrecepie } = req.body;
+
+        // Rezept public in Datenbank aktualisieren
+        const updateResult = await conn.query(
+            `UPDATE recipe 
+             SET public = ?
+             WHERE id = ? AND user_id = ?`,
+            [
+              publicrecepie,
+              rezeptID,
+              userId
+            ]
+        );
+
+        if (updateResult.affectedRows === 0) {
+            return res.status(404).json({ 
+                message: 'Rezept konnte nicht aktualisiert werden' 
+            });
+        }
+
+        res.status(200).json({
+            message: 'Rezept erfolgreich aktualisiert',
+        });
+        
+    } catch (error) {
+      console.error('Fehlerdetails beim Rezept-Update:', {
+          message: error.message,
+          stack: error.stack,
+          body: req.body,
+        });
+
+      // Spezifische Fehlermeldungen
+      if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: 'Ungültiger Token' });
+      }
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token abgelaufen' });
+      }
+      if (error.name === 'SyntaxError') {
+        return res.status(400).json({ message: 'Ungültige JSON-Daten' });
+      }
+
+      res.status(500).json({ message: 'Serverfehler beim Aktualisieren des Rezepts' });
+    } finally {
+      if (conn) conn.release();
+    }
+});
+//PUT '/api/RezeptBearbeiten' END
+//########################################################################################################
+
 
 
 
