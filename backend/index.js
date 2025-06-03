@@ -439,6 +439,32 @@ app.put('/api/RezeptPublicToggle', authMiddleware, async (req, res) => {
 //PUT '/api/RezeptBearbeiten' END
 //########################################################################################################
 
+// GET - public Rezepte holen
+//########################################################################################################
+app.get('/api/PublicRezepte', async (req, res) => {
+    const conn = await getDatabaseConnection();
+    try {
+        const publicRezepte = 1
+        const rezepteRows = await conn.query(
+            'SELECT * FROM recipe WHERE public = ?',
+            [publicRezepte]
+        );
+        
+        write_log('API_Public_REZEPTE', rezepteRows);
+
+        res.status(200).json(rezepteRows);
+        
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Fehler beim Laden der Rezepte' });
+    } finally {
+        if (conn) conn.release();
+    }
+});
+
+// public Rezepte holen ENDE
+//########################################################################################################
 
 
 
