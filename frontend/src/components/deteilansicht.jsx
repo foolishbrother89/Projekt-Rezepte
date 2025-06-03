@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Alert, Badge } from 'react-bootstrap';
 
 function Deteilansicht({ eigeneRezepte, rezeptID}) {
@@ -71,7 +71,7 @@ function Deteilansicht({ eigeneRezepte, rezeptID}) {
               variant="outline-secondary" 
               onClick={handleGoBack}
             >
-              ← Zurück
+              Zurück
             </Button>
             <h1 className="h2 mb-0">{rezept.titel}</h1>
             <Badge bg={rezept.public ? 'success' : 'secondary'}>

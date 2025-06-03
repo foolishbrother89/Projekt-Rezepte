@@ -129,7 +129,7 @@ function App() {
                       setRezeptID={setRezeptID}
                    />} />
 
-            {/* Route eigeneRezepte */}
+            {/* Route Rezept erstellen */}
             <Route path="/rezepterstellen" 
                    element={<RezeptErstellen 
                    />} />
@@ -150,7 +150,10 @@ function App() {
                 wie mach ich das?
             */}
             <Route path="/rezeptebearbeiten" 
-                   element={<RezepteBearbeiten />} />
+                   element={<RezepteBearbeiten
+                    rezeptID={rezeptID} 
+                    eigeneRezepte={eigeneRezepte}
+                    setEigeneRezepte={setEigeneRezepte}/>} />
 
           </Routes>
         </main>

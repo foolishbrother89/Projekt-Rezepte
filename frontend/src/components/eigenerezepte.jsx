@@ -93,6 +93,12 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
     }
 // Deteilseite Ende
 //########################################################################################################################################################
+// Rezept bearbeiten
+//########################################################################################################################################################
+    const handleReceptUpdate = (rezeptID) =>{
+        setRezeptID(rezeptID);
+        navigate('/rezeptebearbeiten');
+    }
 
 // Löschen vom Rezept Knopf
 //########################################################################################################################################################
@@ -244,6 +250,7 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
                                                 variant="outline-secondary" 
                                                 size="sm"
                                                 className="mb-1"
+                                                onClick={() => handleReceptUpdate(rezept.id)}
                                               >
                                               Bearbeiten
                                             </Button>
@@ -276,7 +283,7 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
             )}
 
             {/* Custom CSS Styles */}
-            <style jsx>{`
+            <style jsx="true">{`
                 .recipe-card {
                     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
                     border: 1px solid #e0e0e0;
