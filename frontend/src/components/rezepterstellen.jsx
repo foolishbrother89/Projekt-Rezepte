@@ -21,7 +21,7 @@ function RezeptErstellen(){
     const [bild, setBild] = useState({
         dataURL: null,
         fileName: null,
-        file: file
+        file: null
     });
     //Bildvorschau
     function fileHandler(event){

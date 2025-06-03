@@ -286,10 +286,17 @@ app.put('/api/RezeptBearbeiten', authMiddleware, upload.single('bild'), async (r
         const { titel, zutaten, zubereitung, rezeptID} = req.body;
 
         // Prüfen ob das Rezept dem Benutzer gehört
-        const existingRecipe = await conn.query(
+        const rows = await conn.query(
             'SELECT * FROM recipe WHERE id = ? AND user_id = ?',
             [rezeptID, userId]
         );
+        write_log('Antwort rows', rows);
+        // Antwort rows: [{"id":6,"titel":"Nudelsalat","zutaten":[{"zutat":"Penne","menge":"200","einheit":""},{"zutat":"Mayo","menge":"3","einheit":"Esslöffel"},{"zutat":"Magie","menge":"1","einheit":"Kilogramm"}],"zubereitung":["Nudeln Kochen ","hallo","nein"],
+        // "bild_url":null,"user_id":2,"public":0,"created_at":"2025-05-29T14:43:44.000Z"}]
+
+        // rows ist ein Array von Rezept-Objekten (hier mit nur einem Element).
+        // rows[0] selektiert das erste Objekt im Array 
+        let existingRecipe = rows[0];
 
         if (!existingRecipe) {
             return res.status(404).json({ 
