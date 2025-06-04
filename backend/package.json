@@ -6,14 +6,19 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest --runInBand --detectOpenHandles --forceExit",
+    "cov": "npm run test -- --coverage"
   },
   "keywords": [],
   "author": "Bayramov",
   "license": "MIT",
   "description": "Projekt „Intranet-Kochbuch der Auszubildenden“",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/jest": "^29.5.14",
+    "@types/supertest": "^6.0.3",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.1"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

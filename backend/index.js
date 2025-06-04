@@ -13,8 +13,8 @@ import  {write_log}  from './utils/logger.js';
 const upload = multer({dest:'public/uploads/'})
 
 
-
-const app = express();
+// Damit der dynamiache import funktioniert! für das Testen!
+export const app = express();
 
 
 
@@ -465,6 +465,7 @@ app.get('/api/PublicRezepte', async (req, res) => {
 
 // public Rezepte holen ENDE
 //########################################################################################################
+
 
 
 

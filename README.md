@@ -58,6 +58,20 @@ npm install jwt-decode
 ```bash
 npm install multer
 ```
+# jest und supertest
+```bash
+npm install jest@latest supertest@latest --save-dev
+
+//Konfigurieren in package.json
+"test": "node --experimental-vm-modules node_modules/jest/bin/jest --runInBand --detectOpenHandles --forceExit",
+"cov": "npm run test -- --coverage"
+
+npm run test auth.test.js
+npm cov test auth.test.js
+```
+
+
+
 # recipe Datenbank
 ```bash
 CREATE TABLE recipe (
