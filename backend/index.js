@@ -56,7 +56,7 @@ app.post('/api/register', async (req, res) => {
             [username, name, email, password_hash]  
         );
         //Erfolgsmeldung
-        res.status(201).json({message: 'Regestrierdaten in die Datenbank gespeichert'});
+        res.status(200).json({message: 'Regestrierdaten in die Datenbank gespeichert'});
         
     } catch (error) {
         console.error(error);
