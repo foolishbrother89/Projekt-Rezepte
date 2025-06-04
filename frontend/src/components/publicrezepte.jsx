@@ -3,14 +3,10 @@ import { Container, Row, Col, Card, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 
-function PublicRezepte({ setRezeptID }) {
+function PublicRezepte({ setRezeptID, publicRezepte, setPublicRezepte }) {
     // Debug code an oder ausmachen!
     const debug = true;
 
-    // State für öffentliche Rezepte
-    const [publicRezepte, setPublicRezepte] = useState([]);
-   
-    
     // Error State
     const [error, setError] = useState(null);
 
@@ -83,13 +79,13 @@ function PublicRezepte({ setRezeptID }) {
             {publicRezepte.length === 0 ? (
                 <Row>
                     <Col className="text-center py-5">
-                        <p className="text-muted">Es gibt noch keine publice Rezepte.</p>
+                        <p className="text-muted">Es gibt noch keine öffentlichen Rezepte.</p>
                     </Col>
                 </Row>
             ) : (
                 <Row >
                     {publicRezepte.map((rezept) => (
-                        <Col key={rezept.id} xs={12} sm={6} md={4} lg={3} xl={2} className="mb-4">
+                        <Col key={rezept.id} xs={12} sm={6} md={4} lg={4} className="mb-4">
                             <Card className="h-100 shadow-sm recipe-card">
                                 {/* Rezept Bild */}
                                 <div className="recipe-image-container">

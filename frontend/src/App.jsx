@@ -22,8 +22,11 @@ function App() {
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
-  // Feld für eigene Rezepte
+  // State für eigene Rezepte
   const [eigeneRezepte, setEigeneRezepte] = useState([]);
+
+  // State für öffentliche Rezepte
+  const [publicRezepte, setPublicRezepte] = useState([]);
 
   // Feld für den Aktuel angeklickten Rezept ID für die deteilansicht.jsx
   // Der Knopf Deteils befindet sich in eigenerezepte.jsx dort schicke ich den setter mit 
@@ -143,7 +146,10 @@ function App() {
             
             {/* Route Öffentliche Rezepte */}
             <Route path="/publicrezepte" 
-                   element={<PublicRezepte />} />
+                   element={<PublicRezepte 
+                    publicRezepte={publicRezepte}
+                    setPublicRezepte={setPublicRezepte}
+                   />} />
             
             {/* Route Rezepte bearbeiten -> nicht sichtber im Navlink 
                 aber rezeptebearbeiten.jsx sollte diese route beinflussen können
