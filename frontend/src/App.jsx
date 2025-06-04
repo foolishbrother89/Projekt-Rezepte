@@ -142,11 +142,13 @@ function App() {
                    element={<Deteilansicht 
                       rezeptID={rezeptID}
                       eigeneRezepte={eigeneRezepte}
+                      publicRezepte={publicRezepte}
                    />} />
             
             {/* Route Öffentliche Rezepte */}
             <Route path="/publicrezepte" 
                    element={<PublicRezepte 
+                    setRezeptID={setRezeptID}
                     publicRezepte={publicRezepte}
                     setPublicRezepte={setPublicRezepte}
                    />} />

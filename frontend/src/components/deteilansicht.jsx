@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Alert, Badge } from 'react-bootstrap';
 
-function Deteilansicht({ eigeneRezepte, rezeptID}) {
+function Deteilansicht({ eigeneRezepte, rezeptID, publicRezepte }) {
   const navigate = useNavigate();
   const [rezept, setRezept] = useState(null);
   const [error, setError] = useState(false);
@@ -10,11 +10,6 @@ function Deteilansicht({ eigeneRezepte, rezeptID}) {
   // Der Effekt wird nur dann erneut ausgeführt, wenn sich mindestens eine der Abhängigkeiten geändert hat:
   //  }, [eigeneRezepte, rezeptID]);
   useEffect(() => {
-    if (!eigeneRezepte || eigeneRezepte.length === 0) {
-      setError(true);
-      return;
-    }
-
     //Finde den richtigen Rezept
     function findRightRecepie(eigeneRezepte, rezeptID){
         for(const item of eigeneRezepte){
@@ -24,14 +19,20 @@ function Deteilansicht({ eigeneRezepte, rezeptID}) {
         }
     }
     // Suche nach dem Rezept mit passender ID
-    const foundRezept = findRightRecepie(eigeneRezepte, rezeptID)
+    let foundRezept = findRightRecepie(eigeneRezepte, rezeptID)
+    // Falls nicht gefunden, in öffentlichen Rezepten suchen
+    if (!foundRezept && (publicRezepte.length > 0)) {
+      foundRezept = findRightRecepie(publicRezepte,rezeptID);
+    }
 
     if (foundRezept) {
       setRezept(foundRezept);
     } else {
       setError(true);
     }
-  }, [eigeneRezepte, rezeptID]);
+  }, [eigeneRezepte,publicRezepte, rezeptID]);
+
+  //Mach ich das Selbe mit publicRezepte? Stören sich die useEffecte dann nicht? 
 
   // zurück navigieren
   const handleGoBack = () => {
