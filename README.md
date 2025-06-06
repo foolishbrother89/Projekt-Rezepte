@@ -86,3 +86,8 @@ CREATE TABLE recipe (
   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 ```
+
+# Datenbank DUMP
+```bash
+mysqldump -u aydin -p -B fi37_bayramov_fpadw > sql/fi37_bayramov_fpadw.sql
+```
