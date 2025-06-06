@@ -167,7 +167,7 @@ function Register() {
                 required/>
 
               <Form.Text className="text-muted">
-                Passwort muss mindestens eine längere von 6 haben, 
+                Passwort muss mindestens eine längere von 8 haben, 
                 eine Zahl und ein Sonderzeichen enthalten
               </Form.Text>
             </Form.Group>
