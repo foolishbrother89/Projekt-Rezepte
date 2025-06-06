@@ -67,7 +67,7 @@ npm install jest@latest supertest@latest --save-dev
 "cov": "npm run test -- --coverage"
 
 npm run test auth.test.js
-npm cov test auth.test.js
+npm run cov 
 ```
 
 

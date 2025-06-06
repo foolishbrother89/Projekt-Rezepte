@@ -28,25 +28,20 @@ beforeEach(() => {
 describe('/api/register', () => {
     // Erfolgreiches Regestrieren
     it('sollte einen user erfolgreich regestrieren', async () => {
-        const token = jwt.sign(
-                    { 
-                    username: 'testuser',
-                    name: 'Test Benutzer',
-                    email: 'test@example.com',
-                    password: 'password123', 
-                    },
-                    process.env.JWT_SECRET_KEY
-                );
+        // Ich brauch kein Token!
 
+        // Ersetzt die echte bcrypt.hash()-Funktion durch eine Mock-Funktion
+        jest.spyOn(bcrypt, 'hash').mockResolvedValue('gehashtesPassword123')
 
+        // Simmuliert erfolgreiches INSERT
         getDatabaseConnection.mockImplementation(() => ({
             query: jest.fn().mockResolvedValue({ affectedRows: 1 }),
             release: jest.fn(),
         }));
         
+
         const response = await request(app)
             .post('/api/register')
-            .set('Authorization', `Bearer ${token}`)
             .send({
                 username: 'testuser',
                 name: 'Test Benutzer',
@@ -54,9 +49,77 @@ describe('/api/register', () => {
                 password: 'password123',
             });
 
-        expect(response.statusCode).toBe(200);
+        expect(response.statusCode).toBe(201); // 201 für created
+
         expect(response.body).toEqual({ 
             message: 'Regestrierdaten in die Datenbank gespeichert' 
         });
     });
+    // wenn es den nutzer schon gibt
+    it('sollte einen Fehler auslösen, wenn der Nutzer bereits existiert', async () => {
+
+        // Simuliert einen Duplicate Entry Error 
+        const duplicateError = new Error('Duplicate entry');
+        duplicateError.code = 'ER_DUP_ENTRY';
+       
+
+        getDatabaseConnection.mockResolvedValue({
+            query: jest.fn().mockRejectedValue(duplicateError),
+            release: jest.fn(),
+        });
+
+        const response = await request(app)
+            .post('/api/register')
+            .send({
+                username: 'existinguser',
+                name: 'Existing User',
+                email: 'existing@example.com',
+                password: 'password123',
+            });
+
+        expect(response.statusCode).toBe(409); // 409 für conflict
+        expect(response.body).toEqual({ message: 'Benutzername oder E-Mail bereits vergeben' });
+    });
+
+    // keine Datenbankverbindung gibt
+    it('sollte einen Fehler auslösen, wenn keine Datenbankverbindung hergestellt werden kann', async () => {
+        jest.spyOn(bcrypt, 'hash').mockResolvedValue('gehashtesPassword123');
+
+        // Simuliert Datenbankverbindungsfehler
+        const connectionError = new Error('Cannot connect to database');
+        getDatabaseConnection.mockRejectedValue(connectionError);
+
+        const response = await request(app)
+            .post('/api/register')
+            .send({
+                username: 'testuser',
+                name: 'Test Benutzer',
+                email: 'test@example.com',
+                password: 'password123',
+            });
+          
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toEqual({ message: 'Server error' });
+    });
+
+    // hashen nicht geklappt 
+    it('sollte einen Fehler auslösen, wenn das Passwort-Hashing fehlschlägt', async () => {
+        // Simuliert einen Hash-Fehler
+        const hashError = new Error('Hashing failed');
+        jest.spyOn(bcrypt, 'hash').mockRejectedValue(hashError);
+
+        const response = await request(app)
+            .post('/api/register')
+            .send({
+                username: 'testuser',
+                name: 'Test Benutzer',
+                email: 'test@example.com',
+                password: 'password123',
+            });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toEqual({ message: 'Server error' });
+        expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
+    });
+    
 });

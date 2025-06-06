@@ -35,13 +35,15 @@ app.use(cors({
 //CORS END
 //########################################################################################################
 
+// Statische Dateien bereitstellen 
+app.use('/uploads', express.static('public/uploads'));
 
 //POST '/api/register'
 //########################################################################################################
 //hier sollten die regestrierungsdaten ankommen
 app.post('/api/register', async (req, res) => {
     try {
-        //jetzt aber ernst - die werte aus req.body rausholen
+        //die werte aus req.body rausholen
         const { username, name, email, password } = req.body
 
         //ich muss das Passwort noch hashen
@@ -56,11 +58,16 @@ app.post('/api/register', async (req, res) => {
             [username, name, email, password_hash]  
         );
         //Erfolgsmeldung
-        res.status(200).json({message: 'Regestrierdaten in die Datenbank gespeichert'});
+        res.status(201).json({message: 'Regestrierdaten in die Datenbank gespeichert'});
         
     } catch (error) {
-        console.error(error);
-        res.status(409).json({ message: 'Server error' });
+        // User existiert bereits
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({ 
+                message: 'Benutzername oder E-Mail bereits vergeben' 
+            });
+        }
+        res.status(500).json({ message: 'Server error' });
     } finally {
         if (conn) conn.release();
     }
@@ -116,6 +123,8 @@ app.post('/api/login', async (req, res) => {
     //Ich schicke den erstelten token und die user id zurück 
     //und speichere diese später im localStorage
     res.status(200).json({ token, userId: user.id});
+
+    //Error Fall vergessen!
 });
 //POST '/api/login' END
 //########################################################################################################
@@ -177,9 +186,9 @@ app.post('/api/RezeptErstellen', authMiddleware , upload.single('bild'), async (
       if (error instanceof multer.MulterError) {
         return res.status(400).json({ message: 'Bildfehler: ' + error.message });
       }
-      if (error.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: 'Token abgelaufen' });
-      }
+
+      //'TokenExpiredError' prüfe ich schon im auth.js
+
       if (error.name === 'SyntaxError') {
         return res.status(400).json({ message: 'Ungültige JSON-Daten' });
       }
@@ -191,8 +200,7 @@ app.post('/api/RezeptErstellen', authMiddleware , upload.single('bild'), async (
 })
 //POST '/api/RezeptErstellen' END
 //########################################################################################################
-// Statische Dateien bereitstellen 
-app.use('/uploads', express.static('public/uploads'));
+
 // GET - Eigene Rezepte holen
 //########################################################################################################
 app.get('/api/eigene-rezepte', authMiddleware, async (req, res) => {
@@ -200,7 +208,6 @@ app.get('/api/eigene-rezepte', authMiddleware, async (req, res) => {
     try {
         const userId = req.user.id;
             
-        
         const rezepteRows = await conn.query(
             'SELECT * FROM recipe WHERE user_id = ?',
             [userId]
@@ -362,9 +369,8 @@ app.put('/api/RezeptBearbeiten', authMiddleware, upload.single('bild'), async (r
       if (error instanceof multer.MulterError) {
         return res.status(400).json({ message: 'Bildfehler: ' + error.message });
       }
-      if (error.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: 'Token abgelaufen' });
-      }
+      //'TokenExpiredError' prüfe ich schon im auth.js
+
       if (error.name === 'SyntaxError') {
         return res.status(400).json({ message: 'Ungültige JSON-Daten' });
       }
@@ -424,9 +430,9 @@ app.put('/api/RezeptPublicToggle', authMiddleware, async (req, res) => {
       if (error.name === 'JsonWebTokenError') {
         return res.status(401).json({ message: 'Ungültiger Token' });
       }
-      if (error.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: 'Token abgelaufen' });
-      }
+
+      //'TokenExpiredError' prüfe ich schon im auth.js
+
       if (error.name === 'SyntaxError') {
         return res.status(400).json({ message: 'Ungültige JSON-Daten' });
       }
