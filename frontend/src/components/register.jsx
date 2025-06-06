@@ -1,9 +1,13 @@
 import { Form, Button, Alert} from 'react-bootstrap';
 import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom'; 
 
 function Register() {
 
     const [message, setMessage] = useState('');
+
+    // Navigation
+    const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -101,6 +105,8 @@ function Register() {
         }
         // Formular leeren
         e.target.reset(); 
+
+        navigate('/login')
     }
 
 

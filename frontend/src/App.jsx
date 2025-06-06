@@ -15,11 +15,19 @@ import Deteilansicht from './components/deteilansicht';
 import PublicRezepte from './components/publicrezepte';
 import RezepteBearbeiten from './components/rezeptebearbeiten';
 
+
+
 function App() {
   const [count, setCount] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    Boolean(localStorage.getItem('token'))
+  );
   
-  const [userId, setUserId] = useState(null);
+  // ich brauch die userId nicht -> die backend holt sich das in auth.js aus dem token
+  const [userId, setUserId] = useState(
+    localStorage.getItem('userId') || null
+  );
+
   const navigate = useNavigate();
 
   // State für eigene Rezepte
@@ -40,7 +48,7 @@ function App() {
     Deswegen brauchen wir diesen useEffect Hook
     Prüfen, ob ein Token und userId im Local Storage vorhanden ist
     Wenn ja aktualisiert isLoggedIn und userId
-  */
+  
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUserId = localStorage.getItem('userId');
@@ -50,13 +58,15 @@ function App() {
         setUserId(storedUserId);
     }
   },[navigate]);
+  */
 
   // Logout löscht localStorage werte und setzt die reaktive Variable isLoggedIn 
   // zu false und navigiert zur startseite
   const handleLogout = () => {
-    localStorage.removeItem('token');
+        localStorage.removeItem('token');
         localStorage.removeItem('userId');
         setIsLoggedIn(false);
+        setUserId(null);
         navigate('/');
   };
 
@@ -165,6 +175,8 @@ function App() {
 
           </Routes>
         </main>
+                  
+       
       </div>
 
     </>

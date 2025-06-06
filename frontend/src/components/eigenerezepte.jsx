@@ -255,7 +255,6 @@ function EigeneRezepte({eigeneRezepte, setEigeneRezepte, setRezeptID }){
                 <Row>
                     <Col className="text-center py-5">
                         <p className="text-muted">Sie haben noch keine Rezepte erstellt.</p>
-                        <Button variant="primary">Erstes Rezept erstellen</Button>
                     </Col>
                 </Row>
             ) : (

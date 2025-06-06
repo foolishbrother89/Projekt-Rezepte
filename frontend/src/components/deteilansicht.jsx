@@ -32,7 +32,7 @@ function Deteilansicht({ eigeneRezepte, rezeptID, publicRezepte }) {
     }
   }, [eigeneRezepte,publicRezepte, rezeptID]);
 
-  //Mach ich das Selbe mit publicRezepte? Stören sich die useEffecte dann nicht? 
+
 
   // zurück navigieren
   const handleGoBack = () => {
@@ -53,7 +53,7 @@ function Deteilansicht({ eigeneRezepte, rezeptID, publicRezepte }) {
       </Container>
     );
   }
-  // Rezept noch nicht geladen
+  // Rezept noch nicht geladen - wie teste ich das?
   if (!rezept) {
     return (
       <Container className="py-4 text-center">
@@ -135,20 +135,29 @@ function Deteilansicht({ eigeneRezepte, rezeptID, publicRezepte }) {
             <Card.Header>
               <h3 className="h4 mb-0"> Zubereitung</h3>
             </Card.Header>
-            <Card.Body>
-              {rezept.zubereitung && rezept.zubereitung.length > 0 ? (
-                <ul className="list-unstyled">
-                  {rezept.zubereitung.map((zub, index) => (
-                    <li key={index} className="mb-2 d-flex align-items-center">
-                      <span className="me-2">•</span>
-                      <span>{zub}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-muted">Keine Zubereitung angegeben.</p>
-              )}
-            </Card.Body>
+              <Card.Body>
+                  {rezept.zubereitung?.length > 1 ? (
+                    <ul className="list-unstyled">
+                      {rezept.zubereitung.map((zub, index) => (
+                        <li key={index} className="mb-2 d-flex align-items-center">
+                          <span className="me-2">•</span>
+                          <span>{zub}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : rezept.zubereitung?.length === 1 ? (
+                    <ul className="list-unstyled">
+                      <li className="mb-2 d-flex align-items-center">
+                        <span className="me-2"></span>
+                        <span>{rezept.zubereitung[0]}</span>
+                      </li>
+                    </ul>
+                  ) : (
+                    <p className="text-muted">
+                      Keine Zubereitung angegeben.
+                    </p>
+                  )}
+              </Card.Body>
           </Card>
         </Col>
          
