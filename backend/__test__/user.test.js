@@ -17,13 +17,6 @@ const getDatabaseConnection = (await import('../db')).default;
 // Importiere app von `index.js` dynamisch
 const { app } = await import('../index');
 
-beforeEach(() => {
-    getDatabaseConnection.mockResolvedValue({
-        query: jest.fn().mockResolvedValue(
-            []),
-        release: jest.fn(),
-    });
-});
 
 describe('/api/register', () => {
     // Erfolgreiches Regestrieren
@@ -123,3 +116,116 @@ describe('/api/register', () => {
     });
     
 });
+
+describe('/api/login', () => {
+    // erfolgreich eingelogt 
+    it('sollte einen Benutzer erfolgreich einloggen', async () => {
+        const mockUser = {
+            id: 2,
+            username: 'testuser',
+            name: 'Test Benutzer',
+            email: 'test@example.com',
+            password_hash: 'gehashtesPassword123'
+        };
+
+        // Mock bcrypt.compare für erfolgreichen Passwort-Vergleich
+        jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+
+        // Mock jwt.sign für Token-Erstellung
+        jest.spyOn(jwt, 'sign').mockReturnValue('mocked-jwt-token');
+
+        // Simuliert erfolgreiche Benutzer-Abfrage
+        getDatabaseConnection.mockResolvedValue({
+            query: jest.fn().mockResolvedValue([mockUser]),
+            release: jest.fn(),
+        });
+
+        const response = await request(app)
+            .post('/api/login')
+            .send({
+                username: 'testuser',
+                password: 'password123',
+            });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toHaveProperty('token', 'mocked-jwt-token');
+        expect(response.body).toHaveProperty('userId', 2);
+        expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'gehashtesPassword123');
+        expect(jwt.sign).toHaveBeenCalledWith(
+            { id: 2, username: 'testuser' },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: '1h' }
+        );
+    });
+
+    // user nicht gefunden
+    it('sollte einen Fehler auslösen, wenn der Benutzer nicht gefunden wird', async () => {
+        // Simuliert keine Treffer in der Datenbank
+        getDatabaseConnection.mockResolvedValue({
+            query: jest.fn().mockResolvedValue([]), // Leeres Array = kein Benutzer gefunden
+            release: jest.fn(),
+        });
+
+        const response = await request(app)
+            .post('/api/login')
+            .send({
+                username: 'nichtexistierender',
+                password: 'password123',
+            });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toEqual({ message: 'Benutzer nicht gefunden' });
+    });
+
+    // falsches passwort
+    it('sollte einen Fehler auslösen, wenn das Passwort falsch ist', async () => {
+        const mockUser = {
+            id: 2,
+            username: 'testuser',
+            name: 'Test Benutzer',
+            email: 'test@example.com',
+            password_hash: 'gehashtesPassword123'
+        };
+
+        // Mock bcrypt.compare für fehlgeschlagenen Passwort-Vergleich
+        jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+
+        // Simuliert erfolgreiche Benutzer-Abfrage
+        getDatabaseConnection.mockResolvedValue({
+            query: jest.fn().mockResolvedValue([mockUser]),
+            release: jest.fn(),
+        });
+
+        const response = await request(app)
+            .post('/api/login')
+            .send({
+                username: 'testuser',
+                password: 'falschespasswort',
+            });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toEqual({ message: 'Falsches Passwort' });
+        expect(bcrypt.compare).toHaveBeenCalledWith('falschespasswort', 'gehashtesPassword123');
+    });
+
+    // Serverfehler
+    it('sollte einen Serverfehler auslösen, wenn die Datenbankabfrage fehlschlägt', async () => {
+        // Simuliert Datenbankfehler
+        const dbError = new Error('Database query failed');
+        getDatabaseConnection.mockResolvedValue({
+            query: jest.fn().mockRejectedValue(dbError),
+            release: jest.fn(),
+        });
+
+        const response = await request(app)
+            .post('/api/login')
+            .send({
+                username: 'testuser',
+                password: 'password123',
+            });
+
+
+        expect(response.statusCode).toBe(500);
+    });
+});
+

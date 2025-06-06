@@ -88,11 +88,7 @@ app.post('/api/login', async (req, res) => {
         [user] = await conn.query(
         'SELECT * FROM user WHERE username = ? OR email = ?',
         [username, username]);
-    } catch (error) {
-        console.log(error);
-    } finally {
-        if (conn) conn.release();
-    }
+   
     if (!user) return res.status(400).json(
         { message: 'Benutzer nicht gefunden' }
     );
@@ -123,8 +119,12 @@ app.post('/api/login', async (req, res) => {
     //Ich schicke den erstelten token und die user id zurück 
     //und speichere diese später im localStorage
     res.status(200).json({ token, userId: user.id});
-
-    //Error Fall vergessen!
+    
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    } finally {
+        if (conn) conn.release();
+    }
 });
 //POST '/api/login' END
 //########################################################################################################
